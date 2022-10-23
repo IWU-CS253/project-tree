@@ -58,11 +58,11 @@ Team Contract
 - Primary method of communication is the group discord.
 
 #### Meeting Times
-- Mondays 5:30-6:30 at Tommy's or SAGA
+- Tuesdays 6:00-7:00 at Tommy's or CNS
   - Reflect on previous iteration
   - Discuss plans for next iteration
   - Any other issues
-- Wednesdays 5:30-6:30 in CNS (Room TBD)
+- Thursdays 6:00-7:00 in CNS (Room TBD)
   - Brief (5-10 minutes) verbal check-in / discussion
   - Work time 
   - Last 30 minutes overlaps with Evan's Office Hours, so we can use those if necessary
