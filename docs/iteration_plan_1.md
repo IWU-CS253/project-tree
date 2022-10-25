@@ -2,7 +2,7 @@ Iteration Plan 1
 ----------------
 
 Week 1:
-- Structure Planning
+- Structure Planning: Josh
 - Skeleton Pages (templates and backend): Jeff, Grace
 - Minimum Database: Azeem, Josh 
 - Add Character: Zach 
