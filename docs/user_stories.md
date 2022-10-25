@@ -13,18 +13,7 @@ Factoring dependency into priorities, this uses a 1-5 priority system
 Number where 1 =  Estimated time to create character adding system (probably fastest & easiest)
 
 
-Account Creation
------------------------
-As a user I want to create an account as creator or as a viewer, so I can save my work / save trees I like.
 
- - Priority: 1
- - Estimate: 3
- - Confirmation:
-
-   1. Create an account with a username and password
-   2. Log in with the created account
-   3. See previous work (if any)
-   4. Create new work bound to this account
 
 Tree Creation
 -----------------------
@@ -32,6 +21,7 @@ As a creator, I want to create a tree to hold characters and relationships
 
  - Priority: 1
  - Estimate: 1
+ - Dependency: None
  - Confirmation:
 
    1. Create a tree
@@ -43,6 +33,7 @@ As a creator, I want to add characters with names and descriptions, so I can kee
 
  - Priority: 1
  - Estimate: 1
+ - Dependency: Dependent on Tree Creation
  - Confirmation:
    
    1. Add a character (with a name)
@@ -55,12 +46,44 @@ As a creator, I want to add relationships between my characters  of different ty
 
  - Priority: 1
  - Estimate: 1
+ - Dependency: Character/Person Addition
  - Confirmation:
 
    1. Add a relationship with a predefined type between characters
    2. Check to see the type is as specified
    3. Add a relationship with a custom type between characters
    4. Check to see the type is as specified
+ 
+Editing and Deletion
+-----------------------
+As a creator, I want to be able to edit and delete characters, relationships, and attributes.
+
+ - Priority: 2
+ - Estimate: 2
+ - Dependency: Relationship Creation
+ - Confirmation:
+
+   1. Create characters and relationships
+   2. Delete a character
+   3. Edit a character's name and description
+   4. Delete a relationship
+   5. Change a relationship type
+   6. Edit a relationship attribute
+   7. Check to see if changes persist properly
+
+
+Relationship Descriptions
+-----------------------
+As a creator, I want to add descriptions to my relationships that summarize the nature of the relationships.
+
+ - Priority: 2
+ - Estimate: 1
+ - Dependency: Tree Display: Relationship Types
+ - Confirmation: 
+
+   1. Create a relationship
+   2. Add a description
+   3. Check to see that description persists in all display areas
 
 Tree Display: Characters
 -----------------------
@@ -68,10 +91,24 @@ As a user, I want a page to show my characters with their names and pictures on 
 
  - Priority: 1
  - Estimate: 2
+ - Dependency: Character/Person Addition
  - Confirmation:
 
    1. Add a character (name, description, picture)
    2. Check if the character appears on the page with their picture
+
+Character Image Adding
+-----------------------
+As a creator, I want to be able to upload images to characters
+
+ - Priority: 3
+ - Estimate: 4
+ - Depenendency: Tree Display
+ - Confirmation: 
+
+   1. Create a character (name and description)
+   2. Upload an image to that character
+   3. See that the image persists
  
 Tree Display: Relationships
 -----------------------
@@ -79,6 +116,7 @@ As a user, I want a page to show the connections between my characters and be ab
 
  - Priority: 1
  - Estimate: 4
+ - Dependency: Relationship Addition
  - Confirmation:
 
    1. Add relationships between characters
@@ -90,6 +128,7 @@ As a creator, I want the different relationship types to be colored or otherwise
 
  - Priority: 1
  - Estimate: 2
+ - Dependency: Tree Display: Relationships
  - Confirmation:
 
    1. Add relationships between characters (including types)
@@ -97,25 +136,13 @@ As a creator, I want the different relationship types to be colored or otherwise
    3. Check to see that custom types show the correct color / line type
    4. Check to see that custom type edits show the edited color / line type
 
-Relationship Descriptions
------------------------
-As a creator, I want to add descriptions to my relationships that summarize the nature of the relationships.
-
- - Priority: 2
- - Estimate: 1
- - Confirmation: 
-
-   1. Create a relationship
-   2. Add a description
-   3. Check to see that description persists in all display areas
-
-
 Tree Display: Relationship Legend
 -----------------------
 As a user, I want to have a legend to show what the different colors and types of lines mean for relationships
 
  - Priority: 2
  - Estimate: 1
+ - Dependency: Tree Display: Relationship Types
  - Confirmation:
 
    1. Create relationships
@@ -127,26 +154,26 @@ As a user, I want the tree display to be responsive to different screen sizes an
 
  - Priority: 2
  - Estimate: 3
+ - Dependency: Tree Display
  - Confirmation:
 
    1. Add a simple tree
    2. Check to see display is readable on multiple display sizes via inspect window 
 
-Editing and Deletion
------------------------
-As a creator, I want to be able to edit and delete characters, relationships, and attributes.
 
- - Priority: 2
- - Estimate: 2
+Account Creation
+-----------------------
+As a user I want to create an account as creator or as a viewer, so I can save my work / save trees I like.
+
+ - Priority: 1
+ - Estimate: 3
+ - Dependency: None
  - Confirmation:
 
-   1. Create characters and relationships
-   2. Delete a character
-   3. Edit a character's name and description
-   4. Delete a relationship
-   5. Change a relationship type
-   6. Edit a relationship attribute
-   7. Check to see if changes persist properly
+   1. Create an account with a username and password
+   2. Log in with the created account
+   3. See previous work (if any)
+   4. Create new work bound to this account
 
 Account Security & Recovery
 -----------------------
@@ -154,23 +181,14 @@ As a user, I want to have account security and recovery options.
 
  - Priority: 3
  - Estimate: 4
+ - Dependency: Account Creation
  - Confirmation:
 
    1. Check for data sanitization and make sure SQL injection isn't possible
    2. Reset my password 
    3. Reset my username
  
-Character Image Adding
------------------------
-As a creator, I want to be able to upload images to characters
 
- - Priority: 3
- - Estimate: 4
- - Confirmation: 
-
-   1. Create a character (name and description)
-   2. Upload an image to that character
-   3. See that the image persists
 
 Relationship Type Filtering
 -----------------------
@@ -178,6 +196,7 @@ As a user, I want to be able to filter a tree by relationship types to see speci
 
  - Priority: 3
  - Estimate: 2
+ - Dependency: Relationship type
  - Confirmation: 
 
    1. Add a simple tree
@@ -192,6 +211,7 @@ As a user, I want to be able to show or hide particular branches or narrow down 
 
  - Priority: 3
  - Estimate: 5
+ - Dependency: Tree Display
  - Confirmation:
 
    1. Create a simple tree
@@ -205,6 +225,7 @@ As a user, I want to be able to move tree connections or branches around to form
 
  - Priority: 4
  - Estimate: 7
+ - Dependency: Tree Display
  - Confirmation:
 
    1. Add a simple tree
@@ -218,10 +239,12 @@ As a creator, I want to be able to export my tree display as an image or other f
 
  - Priority: 4
  - Estimate: 5
+ - Dependency: Tree display
  - Confirmation:
 
    1. Add a simple tree
    2. Export the display type as image
+
 
 Character Bios
 -----------------------
@@ -229,6 +252,7 @@ As a creator, I want to add full character bios that can be access from the main
 
  - Priority: 4
  - Estimate: 2
+ - Dependency: Character addition
  - Confirmation:
 
    1. Create a character 
