@@ -14,7 +14,6 @@ import os
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, g, redirect, url_for, render_template, flash
 
-
 # create our little application :)
 app = Flask(__name__)
 
@@ -48,6 +47,7 @@ def initdb_command():
     init_db()
     print('Initialized the database.')
 
+
 def get_db():
     """Opens a new database connection if there is none yet for the
     current application context.
@@ -56,6 +56,7 @@ def get_db():
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
+
 @app.teardown_appcontext
 def close_db(error):
     """Closes the database again at the end of the request."""
@@ -63,15 +64,6 @@ def close_db(error):
         g.sqlite_db.close()
 
 
-@app.route('/', methods=['GET']) #specifing in the url what resource you want to access. Backend takes request and figures out what resource this is for.
-def show_entries():
-    db = get_db()
-    cur = db.execute('select title,category,text,id from entries order by id desc') #gets entries from the data base, cur pointer into the database
-    entries = cur.fetchall() #actually retrieves data from cur (returns list of selected data)
-    cur_filter = db.execute('SELECT DISTINCT category from entries order by id desc')
-    distinct_cats = cur_filter.fetchall()
-    #cat_filter = request.args.get('filter_cats')
-    if "category" in request.args:
-        cur = db.execute("SELECT title,text,category,id from entries WHERE category = ? ORDER BY id desc", [request.args["category"]])
-        entries = cur.fetchall()
-    return render_template('show_entries.html', entries=entries, distinct_cats=distinct_cats) #puts the list into a template
+@app.route('/', methods=['GET'])
+def show_tree():
+    return render_template('show_tree.html')
