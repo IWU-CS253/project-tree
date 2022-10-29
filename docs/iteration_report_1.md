@@ -23,7 +23,7 @@ No significant difficulties encountered
 
 As a slight modification to our original plan, we will one database per character tree, two tables per database, one for characters, one for relationships between the characters
 
-While creating the skeleton page, we pair progamming something something discord option
+While creating the skeleton page, we met multiple times in order to discuss how to complete our individual projects
 
 
 Next Iteration
