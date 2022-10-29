@@ -19,7 +19,7 @@ Adjustments
 ------------------------
 All that was planned was finished
 
-No significant difficulties encountered
+Ran into issues making sure flaskr was properly setup across everyones pcs
 
 As a slight modification to our original plan, we will one database per character tree, two tables per database, one for characters, one for relationships between the characters
 
@@ -40,18 +40,17 @@ Add relationship description creation input, which gives a short description for
  - Josh
 Add basic CSS and styling to character tree page
  - Jeff
-Database
- - ?
+
 
 Future Iterations
 -----------------------
 Iteration Week 3 User Stories
- - Tree Display: Characters
- - Tree Display: Relationships
+ - Create a home page
+ - Create multiple pages
 
 Iteration Week 4 User Stories
- - Account Creation
- - Account Security
+ - Tree Display: Characters
+ - Tree Display: Relationships
  
 
 
