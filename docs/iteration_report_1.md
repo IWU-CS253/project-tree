@@ -11,7 +11,7 @@ Azeem and Josh created the SQL database to be used for the website
  - Completed
 Zach created the add character button
  - Completed
-Azeem, Josh, and Zach created the github actions and unit test files, although no tests were made.
+Azeem, Josh created the github actions and unit test files, although no tests were made.
  - Completed
 
 
@@ -30,16 +30,16 @@ Next Iteration
 ------------------------
 For the next iteration we have a few user stories we will complete
 
-Add Relationship creation input for multiple characters
- - Zach
-Add Edit button for Characters (and relationships?)
- - Grace
-Add Delete button for Characters (and relationships?)
- - Azeem
-Add relationship description creation input, which gives a short description for what the relationship means
- - Josh
-Add basic CSS and styling to character tree page
- - Jeff
+Zach will add Relationship creation input for multiple characters
+
+Grace will add Edit button for Characters 
+
+Azeem will add Delete button for Characters
+ 
+Josh will add relationship description creation input, which gives a short description for what the relationship means
+ 
+Jeff will add basic CSS and styling to character tree page
+ 
 
 
 Future Iterations
