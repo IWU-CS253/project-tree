@@ -11,7 +11,7 @@ Azeem and Josh created the SQL database to be used for the website
 
 Zach created the add character button
 
-Azeem, Josh created the github actions and unit test files, although no tests were made.
+Josh created the github actions and unit test files, although no tests were made.
 
 
 Adjustments
