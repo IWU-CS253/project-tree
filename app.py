@@ -67,3 +67,14 @@ def close_db(error):
 @app.route('/', methods=['GET'])
 def show_tree():
     return render_template('show_tree.html')
+
+
+@app.route('/add', methods=['POST'])
+def add_entry():
+    """Adds a new post"""
+    db = get_db()
+    db.execute('INSERT INTO characters (name) VALUES (?)',
+               [request.form['name']])
+    db.commit()
+    flash('New character was successfully posted')
+    return redirect(url_for('show_tree'))

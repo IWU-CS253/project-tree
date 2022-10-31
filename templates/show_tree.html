@@ -8,4 +8,14 @@
 <body>
     <h1>Family Tree Creator</h1>
 </body>
+
+<form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
+    <dd><input type="text"  size="30" name="name">
+</form>
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-primary" role="alert">
+            {{ message }}
+        </div>
+  {% endfor %}
+
 </html>
