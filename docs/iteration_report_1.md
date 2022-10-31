@@ -4,15 +4,14 @@ Responsibilities
 -----------------------
 
 Josh created a markdown file planning the structure of our website
- - Completed
+
 Jeff and Grace created the skeleton for our website, allowing us to add future featues to the website
- - Completed
+
 Azeem and Josh created the SQL database to be used for the website
- - Completed
+
 Zach created the add character button
- - Completed
+
 Azeem, Josh created the github actions and unit test files, although no tests were made.
- - Completed
 
 
 Adjustments
