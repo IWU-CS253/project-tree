@@ -18,9 +18,19 @@ class FamilytreeTestCase(unittest.TestCase):
         os.unlink(familytree.app.config['DATABASE'])
 
     # A simple placeholder test; can be removed once first tests are added
-    def test_placeholder(self):
+    def test_empty_db(self):
         rv = self.app.get('/')
-        assert b'Family Tree Creator' in rv.data
+        assert b'No characters added.' in rv.data
+
+    def test_add_character(self):
+        rv = self.app.post('/add-character', data=dict(
+            name='Alice'
+        ), follow_redirects=True)
+        assert b'No characters added.' not in rv.data
+        # Below ensures that there are 2 unique appearances of 'Alice', since it should be present both in the character
+        # list and in the flash message.
+        assert rv.data.count(b'Alice') == 2
+        assert b'Added Alice' in rv.data
 
 
 if __name__ == '__main__':

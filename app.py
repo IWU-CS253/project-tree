@@ -72,7 +72,7 @@ def show_tree():
     return render_template('show_tree.html', characters=characters)
 
 
-@app.route('/add', methods=['POST'])
+@app.route('/add-character', methods=['POST'])
 def add_character():
     """Adds a new character"""
     db = get_db()
