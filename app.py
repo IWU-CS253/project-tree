@@ -84,7 +84,7 @@ def add_character():
     return redirect(url_for('show_tree'))
 
 @app.route('/delete', methods=['POST'])
-def delete_entry():
+def delete_character():
     db = get_db()
     db.execute('delete from characters where id = ?', [request.form['id']])
     db.commit()
@@ -92,15 +92,15 @@ def delete_entry():
     return redirect(url_for('show_tree'))
 
 @app.route('/edit', methods=['POST'])
-def edit_entry():
+def edit_character():
     db = get_db()
     cur = db.execute('select name, id from characters where id = ?', [request.form['id']])
-    entries = cur.fetchone()
+    characters = cur.fetchone()
     flash('moved to edit page')
-    return render_template('edit.html', entries=entries)
+    return render_template('edit.html', characters=characters)
 
 @app.route('/save_edit', methods=['POST'])
-def save_edit_entry():
+def save_edit_character():
     db = get_db()
     db.execute('update characters set name = ? where id = ?', [request.form['name'], request.form['id']])
     db.commit()
