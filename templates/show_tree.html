@@ -17,12 +17,12 @@
         </form>
       {% for character in characters %}
     <form action="{{ url_for('delete_character') }}" method="post">
-      <input type="hidden" name="id" value = {{ character.id }}>
-    <dd><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Delete" }}>
+      <input type="hidden" name="id" value="{{ character.id }}">
+    <dt><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Delete" }}>
       </form>
     <form action="{{ url_for('edit_character') }}" method="post">
-      <input type="hidden" name="id" value = {{ character.id }}>
-    <dd><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Edit" }}>
+      <input type="hidden" name="id" value="{{ character.id }}">
+    <dt><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Edit" }}>
       </form>
       {% endfor %}
             {% for message in get_flashed_messages() %}

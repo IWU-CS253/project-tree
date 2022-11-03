@@ -67,7 +67,7 @@ def close_db(error):
 @app.route('/', methods=['GET'])
 def show_tree():
     db = get_db()
-    cur = db.execute('SELECT name FROM characters')
+    cur = db.execute('SELECT name, id FROM characters')
     characters = cur.fetchall()
     return render_template('show_tree.html', characters=characters)
 

@@ -11,9 +11,9 @@
   <form action="{{ url_for('save_edit_character') }}" method="post">
     <dl>
       <dt><label for="inputName" class="form-label">Name</label>
-        <dd><input type="text" size="30" name="Name" class="form-control" id="inputName" value={{ characters.name }}></dt>
-        <dd><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Edit" }}>
-        <input type="hidden" name="id" value = {{ characters.id }}>
+        <dt><input type="text" size="30" name="Name" class="form-control" id="inputName" value="{{ characters.name }}"></dt>
+        <dt><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Edit" }}>
+        <input type="hidden" name="id" value="{{ characters.id }}">
     </dl>
   </form>
     </div>
