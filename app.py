@@ -63,14 +63,16 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
-
-@app.route('/', methods=['GET'])
+@app.route('/tree', methods=['GET'])
 def show_tree():
     db = get_db()
     cur = db.execute('SELECT name FROM characters')
     characters = cur.fetchall()
     return render_template('show_tree.html', characters=characters)
 
+@app.route('/', methods=['GET'])
+def home_page():
+    return render_template('homepage.html')
 
 @app.route('/add-character', methods=['POST'])
 def add_character():
