@@ -82,3 +82,26 @@ def add_character():
     db.commit()
     flash('Added ' + name)
     return redirect(url_for('show_tree'))
+
+
+@app.route('/add_relationship', methods=['POST'])
+def add_relationship():
+    """Deletes a selected post, identified by its id"""
+    db = get_db()
+    db.execute('INSERT INTO relationships (character1, character2) VALUES (?,?)',
+               [request.form['character1'], request.form['character2']])
+    db.commit()
+    flash('added relationship')
+    return redirect(url_for('show_tree'))
+
+
+@app.route('/show_relationship', methods=['GET'])
+def show_relationship():
+    db = get_db()
+    cur = db.execute('SELECT id FROM characters WHERE id = ?',
+                     [request.args['id']])
+    chosen_character = cur.fetchone()
+    cur = db.execute('SELECT * FROM characters EXCEPT SELECT * FROM characters WHERE id = ?',
+                     [request.args['id']])
+    characters = cur.fetchall()
+    return render_template('add_relationship.html', chosen_character=chosen_character, characters=characters)
