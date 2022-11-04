@@ -93,15 +93,3 @@ def add_relationship():
     db.commit()
     flash('added relationship')
     return redirect(url_for('show_tree'))
-
-
-@app.route('/show_relationship', methods=['GET'])
-def show_relationship():
-    db = get_db()
-    cur = db.execute('SELECT id FROM characters WHERE id = ?',
-                     [request.args['id']])
-    chosen_character = cur.fetchone()
-    cur = db.execute('SELECT * FROM characters EXCEPT SELECT * FROM characters WHERE id = ?',
-                     [request.args['id']])
-    characters = cur.fetchall()
-    return render_template('add_relationship.html', chosen_character=chosen_character, characters=characters)
