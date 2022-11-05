@@ -35,13 +35,22 @@
     <div class="container px-1 py-1" name="Characters">
         <h3>Characters</h3>
         <ul class="characters list-unstyled">
-            {% for character in characters %}
-                <li class="row gy-20 justify-content-md-center">
-                    <h6>{{ character.name }}</h6>
-                </li>
-            {% else %}
-                <li><em>No characters added.</em></li>
-            {% endfor %}
+        {% for character in characters %}
+            <li class="row gy-20 justify-content-md-center">
+                <h6>{{ character.name }}</h6>
+                <form action="{{ url_for('add_relationship') }}" method="post">
+                  <input type="hidden" name="character1" value="{{character.name}}">
+                  <select id="character2" name="character2">
+                      {% for character2 in characters %}
+                          <option>{{character2.name}}</option>
+                      {% endfor %}
+                      <input type="submit">
+                  </select>
+                </form>
+            </li>
+        {% else %}
+            <li><em>No characters added.</em></li>
+        {% endfor %}
         </ul>
     </div>
 </body>

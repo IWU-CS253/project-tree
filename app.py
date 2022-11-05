@@ -83,6 +83,18 @@ def add_character():
     flash('Added ' + name)
     return redirect(url_for('show_tree'))
 
+
+@app.route('/add_relationship', methods=['POST'])
+def add_relationship():
+    """Deletes a selected post, identified by its id"""
+    db = get_db()
+    db.execute('INSERT INTO relationships (character1, character2) VALUES (?,?)',
+               [request.form['character1'], request.form['character2']])
+    db.commit()
+    flash('added relationship')
+    return redirect(url_for('show_tree'))
+
+
 @app.route('/delete', methods=['POST'])
 def delete_character():
     db = get_db()
@@ -90,6 +102,7 @@ def delete_character():
     db.commit()
     flash('character was deleted')
     return redirect(url_for('show_tree'))
+
 
 @app.route('/edit', methods=['POST'])
 def edit_character():
@@ -99,6 +112,7 @@ def edit_character():
     flash('moved to edit page')
     return render_template('edit.html', characters=characters)
 
+
 @app.route('/save_edit', methods=['POST'])
 def save_edit_character():
     db = get_db()
@@ -106,3 +120,4 @@ def save_edit_character():
     db.commit()
     flash('character was edited')
     return redirect(url_for('show_tree'))
+
