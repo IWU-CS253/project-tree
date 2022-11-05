@@ -32,6 +32,81 @@ class FamilytreeTestCase(unittest.TestCase):
         assert rv.data.count(b'Alice') == 2
         assert b'Added Alice' in rv.data
 
+    def test_edit_character(self):
+        rv = self.app.post('/add-character', data=dict(
+            name='Charles'
+        ), follow_redirects=True)
+        #assert rv.data.count(b'Charles') == 2
+        assert b'Added Charles' in rv.data
+
+        rv = self.app.post('/add-character', data=dict(
+            name='James'
+        ), follow_redirects=True)
+        assert b'Added James' in rv.data
+
+        edit_rv = self.app.post('/edit', data=dict(
+            name='Charles'
+        ), follow_redirects=True)
+
+        assert b'Charles' in edit_rv.data
+        assert b'James' not in edit_rv.data
+
+    def test_save_edit_character(self):
+        rv = self.app.post('/add-character', data=dict(
+            name='Charles'
+        ), follow_redirects=True)
+
+        assert b'Added Charles' in rv.data
+
+        rv = self.app.post('/add-character', data=dict(
+            name='James'
+        ), follow_redirects=True)
+        assert b'Added James' in rv.data
+
+        edited_rv = self.app.post('/save_edit', data=dict(
+            rename='James',
+            name='Hannibal'
+        ), follow_redirects=True)
+        assert b'Charles' in edited_rv.data
+        assert b'James' not in edited_rv.data
+        assert b'Hannibal' in edited_rv.data
+
+    def test_delete(self):
+        rv = self.app.post('/add-character', data=dict(
+            name='Charles'
+        ), follow_redirects=True)
+
+        assert b'Added Charles' in rv.data
+
+        deleted_rv = self.app.post('/delete', data=dict(
+            name = 'Charles'
+        ), follow_redirects=True)
+
+        assert b'character was deleted' in deleted_rv.data
+        assert b'Charles' not in deleted_rv.data
+
+    def test_delete_last(self):
+        rv = self.app.post('/add-character', data=dict(
+            name='Charles'
+        ), follow_redirects=True)
+
+        assert b'Added Charles' in rv.data
+
+        rv = self.app.post('/add-character', data=dict(
+            name='Leo'
+        ), follow_redirects=True)
+
+        assert b'Added Leo' in rv.data
+
+        deleted_rv = self.app.post('/delete', data=dict(
+            name='Leo'
+        ), follow_redirects=True)
+
+        assert b'character was deleted' in deleted_rv.data
+        assert b'Leo' not in deleted_rv.data
+        assert b'Charles' in deleted_rv.data
+
+
 
 if __name__ == '__main__':
     unittest.main()
