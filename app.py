@@ -67,7 +67,7 @@ def close_db(error):
 @app.route('/', methods=['GET'])
 def show_tree():
     db = get_db()
-    cur = db.execute('SELECT name FROM characters')
+    cur = db.execute('SELECT name, id FROM characters')
     characters = cur.fetchall()
     return render_template('show_tree.html', characters=characters)
 
@@ -93,3 +93,31 @@ def add_relationship():
     db.commit()
     flash('added relationship')
     return redirect(url_for('show_tree'))
+
+
+@app.route('/delete', methods=['POST'])
+def delete_character():
+    db = get_db()
+    db.execute('delete from characters where name = ?', [request.form['name']])
+    db.commit()
+    flash('character was deleted')
+    return redirect(url_for('show_tree'))
+
+
+@app.route('/edit', methods=['POST'])
+def edit_character():
+    db = get_db()
+    cur = db.execute('select name from characters where name = ?', [request.form['name']])
+    characters = cur.fetchone()
+    flash('moved to edit page')
+    return render_template('edit.html', characters=characters)
+
+
+@app.route('/save_edit', methods=['POST'])
+def save_edit_character():
+    db = get_db()
+    db.execute('update characters set name = ? where name = ?', [request.form['name'], request.form['rename']])
+    db.commit()
+    flash('character was edited')
+    return redirect(url_for('show_tree'))
+
