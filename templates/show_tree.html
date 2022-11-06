@@ -5,6 +5,7 @@
     <title>Family Tree</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 </head>
 <body>
     {% for message in get_flashed_messages() %}
@@ -23,22 +24,42 @@
                     <input type="submit" class="btn btn-primary btn-sm" value={{ "Add" }}>
                 </form>
             </div>
-            <div class="row">
+            {%  if characters|length > 1 %}
                 <h2>Add Relationship</h2>
                 <form action="{{ url_for('add_relationship') }}" method="post">
-                  <select id="character1" name="character1">
-                      {% for character1 in characters %}
+                    <label for="character1">Character 1</label>
+                    <select class="mb-1 mt-1" id="character1" name="character1">
+                        {% for character1 in characters %}
                           <option>{{character1.name}}</option>
-                      {% endfor %}
-                  </select>
-                  <select id="character2" name="character2">
-                      {% for character2 in characters %}
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="character1">Character 2</label>
+                    <select class="mb-1 mt-1" id="character2" name="character2">
+                        {% for character2 in characters %}
                           <option>{{character2.name}}</option>
-                      {% endfor %}
-                      <input type="submit" value="Add Relationship">
-                  </select>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="type">Type</label>
+                    <select class="mb-1 mt-1" id="type" name="type">
+                        <option>Parent - Child</option>
+                        <option>Sibling - Sibling</option>
+                        <option>Spouse - Spouse</option>
+                        <option>Partner - Partner</option>
+                        <option>Custom</option>
+                    </select>
+                    <div class="mb-1 mt-1" id="custom"></div>
+                    <script type="text/javascript">
+                        $('#type').on('change', function () {
+                            var selected = $( "#type option:selected" ).text();
+                            if(selected == "Custom") $("#custom").html("<input type=\"text\" id=\"inputType\" size=\"10\" name=\"custom-type\">");
+                            else $("#custom").html("");
+                        });
+                    </script>
+                    <input class="mb-1 mt-1" type="submit" value="Add Relationship">
                 </form>
-            </div>
+            {% endif %}
         </div>
     </div>
     <div class="container px-1 py-1">

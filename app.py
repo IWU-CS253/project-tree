@@ -88,8 +88,12 @@ def add_character():
 @app.route('/add_relationship', methods=['POST'])
 def add_relationship():
     db = get_db()
-    db.execute('INSERT INTO relationships (character1, character2) VALUES (?,?)',
-               [request.form['character1'], request.form['character2']])
+    if request.form['type'] == 'Custom':
+        db.execute('INSERT INTO relationships (character1, character2, type) VALUES (?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['custom-type']])
+    else:
+        db.execute('INSERT INTO relationships (character1, character2, type) VALUES (?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['type']])
     db.commit()
     flash('added relationship')
     return redirect(url_for('show_tree'))
