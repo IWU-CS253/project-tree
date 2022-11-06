@@ -27,9 +27,9 @@ class FamilytreeTestCase(unittest.TestCase):
             name='Alice'
         ), follow_redirects=True)
         assert b'No characters added.' not in rv.data
-        # Below ensures that there are 2 unique appearances of 'Alice', since it should be present both in the character
-        # list and in the flash message.
-        assert rv.data.count(b'Alice') == 2
+        # Below ensures that there are at least 2 unique appearances of 'Alice', since it should be present both in the
+        # character list and in the flash message (at minimum; other features may also have it present)
+        assert rv.data.count(b'Alice') > 2
         assert b'Added Alice' in rv.data
 
     def test_edit_character(self):
@@ -105,7 +105,6 @@ class FamilytreeTestCase(unittest.TestCase):
         assert b'character was deleted' in deleted_rv.data
         assert b'Leo' not in deleted_rv.data
         assert b'Charles' in deleted_rv.data
-
 
 
 if __name__ == '__main__':
