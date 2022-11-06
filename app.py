@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-    Flaskr
+    Family Tree Creator
     ~~~~~~
 
-    A microblog example application written as Flask tutorial with
-    Flask and sqlite3.
+    A simple webapp for creating family trees for fictional characters
+    and real families alike. Built on code from the Flaskr Microblogger Webapp.
+    See LICENSE for more details.
 
     :copyright: (c) 2015 by Armin Ronacher.
     :license: BSD, see LICENSE for more details.
@@ -119,4 +120,3 @@ def save_edit_character():
     db.commit()
     flash('character was edited')
     return redirect(url_for('show_tree'))
-
