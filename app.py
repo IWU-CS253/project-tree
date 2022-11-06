@@ -67,7 +67,7 @@ def close_db(error):
 @app.route('/', methods=['GET'])
 def show_tree():
     db = get_db()
-    cur = db.execute('SELECT name, id FROM characters')
+    cur = db.execute('SELECT name FROM characters')
     characters = cur.fetchall()
     return render_template('show_tree.html', characters=characters)
 
@@ -86,7 +86,6 @@ def add_character():
 
 @app.route('/add_relationship', methods=['POST'])
 def add_relationship():
-    """Deletes a selected post, identified by its id"""
     db = get_db()
     db.execute('INSERT INTO relationships (character1, character2) VALUES (?,?)',
                [request.form['character1'], request.form['character2']])
