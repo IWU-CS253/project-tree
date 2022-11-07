@@ -55,6 +55,7 @@ def get_db():
     """
     if not hasattr(g, 'sqlite_db'):
         g.sqlite_db = connect_db()
+    g.sqlite_db.execute('pragma foreign_keys=on')
     return g.sqlite_db
 
 
@@ -70,7 +71,9 @@ def show_tree():
     db = get_db()
     cur = db.execute('SELECT name FROM characters')
     characters = cur.fetchall()
-    return render_template('show_tree.html', characters=characters)
+    cur = db.execute('SELECT character1, character2, type FROM relationships')
+    relationships = cur.fetchall()
+    return render_template('show_tree.html', characters=characters, relationships=relationships)
 
 
 @app.route('/add-character', methods=['POST'])
@@ -88,6 +91,8 @@ def add_character():
 @app.route('/add_relationship', methods=['POST'])
 def add_relationship():
     db = get_db()
+    insert = [request.form['character1'], request.form['character2'], request.form['type']]
+    print(insert)
     if request.form['type'] == 'Custom':
         db.execute('INSERT INTO relationships (character1, character2, type) VALUES (?,?,?)',
                    [request.form['character1'], request.form['character2'], request.form['custom-type']])
