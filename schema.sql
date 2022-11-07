@@ -2,17 +2,16 @@ drop table if exists characters;
 drop table if exists relationships;
 
 CREATE TABLE characters (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT not null,
+    name TEXT PRIMARY KEY,
     description TEXT
 );
 
 CREATE TABLE relationships (
-    character1 INT,
-    character2 INT,
-    type TEXT not null,
+    character1 TEXT,
+    character2 TEXT,
+    type TEXT,
     description TEXT,
-    PRIMARY KEY (character1, character2),
-    FOREIGN KEY (character1) references characters(id),
-    FOREIGN KEY (character2) references characters(id)
+    PRIMARY KEY (character1, character2, type),
+    FOREIGN KEY (character1) REFERENCES characters(name) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (character2) REFERENCES characters(name) ON UPDATE CASCADE ON DELETE CASCADE
 );

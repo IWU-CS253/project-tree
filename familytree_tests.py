@@ -27,16 +27,20 @@ class FamilytreeTestCase(unittest.TestCase):
             name='Alice'
         ), follow_redirects=True)
         assert b'No characters added.' not in rv.data
-        # Below ensures that there are 2 unique appearances of 'Alice', since it should be present both in the character
-        # list and in the flash message.
-        assert rv.data.count(b'Alice') == 2
+
+        # Below ensures that there are at least 2 unique appearances of 'Alice', since it should be present both in the
+        # character list and in the flash message (at minimum; other features may also have it present)
+        assert rv.data.count(b'Alice') > 2
+
         assert b'Added Alice' in rv.data
 
     def test_edit_character(self):
         rv = self.app.post('/add-character', data=dict(
             name='Charles'
         ), follow_redirects=True)
-        #assert rv.data.count(b'Charles') == 2
+
+        assert rv.data.count(b'Charles') > 2
+
         assert b'Added Charles' in rv.data
 
         rv = self.app.post('/add-character', data=dict(
@@ -49,7 +53,38 @@ class FamilytreeTestCase(unittest.TestCase):
         ), follow_redirects=True)
 
         assert b'Charles' in edit_rv.data
+
         assert b'James' not in edit_rv.data
+
+    def test_relationship_adder_appearance(self):
+        # Tests to ensure that the add relationship fields appear when (and only one) 2 or more characters exist
+        rv = self.app.get('/')
+        assert b'Add Relationship' not in rv.data
+
+        rv = self.app.post('/add-character', data=dict(
+            name='George'
+        ), follow_redirects=True)
+        assert b'Add Relationship' not in rv.data
+
+        rv = self.app.post('/add-character', data=dict(
+            name='Martha'
+        ), follow_redirects=True)
+        assert b'Add Relationship' in rv.data
+
+    def test_add_relationship(self):
+        self.app.post('/add-character', data=dict(name='George'), follow_redirects=True)
+        self.app.post('/add-character', data=dict(name='Martha'), follow_redirects=True)
+        rv = self.app.post('/add_relationship', data=dict(
+            character1='George', character2='Martha', type='Spouse - Spouse', description=''
+        ), follow_redirects=True)
+        assert b'<b>George</b> <i>Spouse - Spouse</i> <b>Martha</b>' in rv.data
+
+        rv = self.app.post('/add_relationship', data=dict(
+            character1='George', character2='Martha',  custom_type='Friend - Friend', type='Custom', description='Friends since preschool'
+        ), follow_redirects=True)
+        assert b'<b>George</b> <i>Friend - Friend</i> <b>Martha</b>' in rv.data
+
+        assert b'Friends since preschool' in rv.data
 
     def test_save_edit_character(self):
         rv = self.app.post('/add-character', data=dict(
@@ -68,7 +103,9 @@ class FamilytreeTestCase(unittest.TestCase):
             name='Hannibal'
         ), follow_redirects=True)
         assert b'Charles' in edited_rv.data
+
         assert b'James' not in edited_rv.data
+
         assert b'Hannibal' in edited_rv.data
 
     def test_delete(self):
@@ -83,6 +120,7 @@ class FamilytreeTestCase(unittest.TestCase):
         ), follow_redirects=True)
 
         assert b'character was deleted' in deleted_rv.data
+
         assert b'Charles' not in deleted_rv.data
 
     def test_delete_last(self):
@@ -103,9 +141,10 @@ class FamilytreeTestCase(unittest.TestCase):
         ), follow_redirects=True)
 
         assert b'character was deleted' in deleted_rv.data
-        assert b'Leo' not in deleted_rv.data
-        assert b'Charles' in deleted_rv.data
 
+        assert b'Leo' not in deleted_rv.data
+
+        assert b'Charles' in deleted_rv.data
 
 
 if __name__ == '__main__':
