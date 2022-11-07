@@ -1,4 +1,5 @@
 
+# Iteration 2
 
 Responsibilities (Original)
 ----------------------
@@ -20,8 +21,8 @@ Josh was supposed to work on creating an extra attribute for relationship descri
 that allows them to input their relationship descriptions into their own relationships. 
 
 Due to various circumstances (a group member dropping, confusion with assignments (one of the issues made on Github wasn't clear that the delete 
-and edit functions were meant to be two separate responsibilites, and there was some miscomunication as well), and just general reassignment)
-Our plan's responsibilites had to change. 
+and edit functions were meant to be two separate responsibilities, and there was some miscommunication as well), and just general reassignment)
+Our plan's responsibilities had to change. 
 
 New Responsibilities
 ---------------------------
@@ -54,16 +55,17 @@ character id attribute.
 
 Zach completed adding in a function to put relationships into the database/relationship table.
 
-Josh completed the implementation of the relationship type attribute, as well as added a user feature on the GUI
-to let users add in this relationship type on their own trees. He finished putting all of the edit and delete buttons in
-their proper places with Bootstrap. He also started on the Home page, this is still a work in progress.
+Josh completed the implementation of the relationship attributes types and descriptons, as well as made user features on the GUI
+to let users add in these relationship types and descriptions on their own trees. 
+He finished putting all of the edit and delete buttons in their proper places with Bootstrap. 
+He also started on the Home page, this is still a work in progress.
 
 
 What We Planned But Didn't Finish
 ---------------------------------
 
-We did not get around to adding in relationship descriptions, doing a lot with Bootstrap styling, 
-and showing the added relationships on the site's display. 
+We did not get around to doing a lot with styling our Character Tree Page using Bootstrap and basic CSS, 
+and we also did not get around to actually showing the added relationships on the site's display. 
 
 
 
@@ -104,7 +106,8 @@ and figuring out how to use Github's pull requests also helped us to make our me
 Next Iteration
 ------------------------
 
- - Grace will finish creating the home page/do additional styling of the Indivdual Tree Pages
+ - Grace will finish creating the home page/do additional styling of the Individual Tree Pages and work on implementing
+features to delete relationships
  - Jeff will figure out how to Create Multiple Trees
  - Josh will work on implementing Implicit Relationship Types into the Tree Pages 
  - Zach will add in Relationship Descriptions
