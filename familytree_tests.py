@@ -75,15 +75,16 @@ class FamilytreeTestCase(unittest.TestCase):
         self.app.post('/add-character', data=dict(name='George'), follow_redirects=True)
         self.app.post('/add-character', data=dict(name='Martha'), follow_redirects=True)
         rv = self.app.post('/add_relationship', data=dict(
-            character1='George', character2='Martha', type='Spouse - Spouse'
+            character1='George', character2='Martha', type='Spouse - Spouse', description=''
         ), follow_redirects=True)
         assert b'<b>George</b> <i>Spouse - Spouse</i> <b>Martha</b>' in rv.data
 
         rv = self.app.post('/add_relationship', data=dict(
-            character1='George', character2='Martha',  custom_type='Friend - Friend', type='Custom'
+            character1='George', character2='Martha',  custom_type='Friend - Friend', type='Custom', description='Friends since preschool'
         ), follow_redirects=True)
         assert b'<b>George</b> <i>Friend - Friend</i> <b>Martha</b>' in rv.data
 
+        assert b'Friends since preschool' in rv.data
 
     def test_save_edit_character(self):
         rv = self.app.post('/add-character', data=dict(

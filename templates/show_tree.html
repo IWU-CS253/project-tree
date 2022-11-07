@@ -41,6 +41,10 @@
                                     {%  for relationship in relationships %}
                                         {%  if relationship.character1 == character.name or relationship.character2 == character.name %}
                                             <b>{{ relationship.character1 }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.character2 }}</b>
+                                            {% if relationship.description %}
+                                                {{ relationship.description }}
+                                                <br>
+                                            {% endif %}
                                             <br>
                                         {% endif %}
                                     {% else %}
@@ -91,6 +95,7 @@
                                 <option>Partner - Partner</option>
                                 <option>Custom</option>
                             </select>
+                            <br>
                             <div class="mb-1 mt-1" id="custom"></div>
                             <script type="text/javascript">
                                 $('#type').on('change', function () {
@@ -99,6 +104,8 @@
                                     else $("#custom").html("");
                                 });
                             </script>
+                            <label for="description">Description (Optional)</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
                             <input class="mb-1 mt-1" type="submit" value="Add Relationship">
                         </form>
                     {% endif %}

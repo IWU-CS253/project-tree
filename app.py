@@ -71,7 +71,7 @@ def show_tree():
     db = get_db()
     cur = db.execute('SELECT name FROM characters')
     characters = cur.fetchall()
-    cur = db.execute('SELECT character1, character2, type FROM relationships')
+    cur = db.execute('SELECT character1, character2, type, description FROM relationships')
     relationships = cur.fetchall()
     return render_template('show_tree.html', characters=characters, relationships=relationships)
 
@@ -92,11 +92,11 @@ def add_character():
 def add_relationship():
     db = get_db()
     if request.form['type'] == 'Custom':
-        db.execute('INSERT INTO relationships (character1, character2, type) VALUES (?,?,?)',
-                   [request.form['character1'], request.form['character2'], request.form['custom_type']])
+        db.execute('INSERT INTO relationships (character1, character2, type, description) VALUES (?,?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['custom_type'], request.form['description']])
     else:
-        db.execute('INSERT INTO relationships (character1, character2, type) VALUES (?,?,?)',
-                   [request.form['character1'], request.form['character2'], request.form['type']])
+        db.execute('INSERT INTO relationships (character1, character2, type, description) VALUES (?,?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['type'], request.form['description']])
     db.commit()
     flash('added relationship')
     return redirect(url_for('show_tree'))
