@@ -95,7 +95,7 @@ def add_relationship():
     print(insert)
     if request.form['type'] == 'Custom':
         db.execute('INSERT INTO relationships (character1, character2, type) VALUES (?,?,?)',
-                   [request.form['character1'], request.form['character2'], request.form['custom-type']])
+                   [request.form['character1'], request.form['character2'], request.form['custom_type']])
     else:
         db.execute('INSERT INTO relationships (character1, character2, type) VALUES (?,?,?)',
                    [request.form['character1'], request.form['character2'], request.form['type']])

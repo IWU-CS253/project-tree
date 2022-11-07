@@ -56,6 +56,35 @@ class FamilytreeTestCase(unittest.TestCase):
 
         assert b'James' not in edit_rv.data
 
+    def test_relationship_adder_appearance(self):
+        # Tests to ensure that the add relationship fields appear when (and only one) 2 or more characters exist
+        rv = self.app.get('/')
+        assert b'Add Relationship' not in rv.data
+
+        rv = self.app.post('/add-character', data=dict(
+            name='George'
+        ), follow_redirects=True)
+        assert b'Add Relationship' not in rv.data
+
+        rv = self.app.post('/add-character', data=dict(
+            name='Martha'
+        ), follow_redirects=True)
+        assert b'Add Relationship' in rv.data
+
+    def test_add_relationship(self):
+        self.app.post('/add-character', data=dict(name='George'), follow_redirects=True)
+        self.app.post('/add-character', data=dict(name='Martha'), follow_redirects=True)
+        rv = self.app.post('/add_relationship', data=dict(
+            character1='George', character2='Martha', type='Spouse - Spouse'
+        ), follow_redirects=True)
+        assert b'<b>George</b> <i>Spouse - Spouse</i> <b>Martha</b>' in rv.data
+
+        rv = self.app.post('/add_relationship', data=dict(
+            character1='George', character2='Martha',  custom_type='Friend - Friend', type='Custom'
+        ), follow_redirects=True)
+        assert b'<b>George</b> <i>Friend - Friend</i> <b>Martha</b>' in rv.data
+
+
     def test_save_edit_character(self):
         rv = self.app.post('/add-character', data=dict(
             name='Charles'
