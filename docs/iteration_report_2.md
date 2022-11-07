@@ -106,10 +106,10 @@ and figuring out how to use Github's pull requests also helped us to make our me
 Next Iteration
 ------------------------
 
- - Grace will finish creating the home page/do additional styling of the Individual Tree Pages 
- - Jeff will figure out how to Create Multiple Trees
- - Josh will work on implementing Implicit Relationship Types into the Tree Pages 
- - Zach will work on implementing features to delete relationships
+ - Grace will finish creating the home page/do additional styling of the Individual Tree Pages. 
+ - Jeff will figure out how to Create Multiple Trees.
+ - Josh will work on implementing Implicit Relationship Types into the Tree Pages. 
+ - Zach will work on implementing features to delete relationships.
 
 Future Iterations
 ------------------------------
