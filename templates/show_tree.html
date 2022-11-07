@@ -5,53 +5,106 @@
     <title>Family Tree</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="position-absolute top-50 start-50 translate-middle mt-1">
-        <h1 class="display-3">Family Tree Creator</h1>
-        <div class="container px-1 py-1" name="Add Character">
-            <h2>Add Character</h2>
-            <form action="{{ url_for('add_character') }}" method="post" class="add-entry">
-                <label for="inputName" class="form-label">Name</label>
-                <input type="text" id="inputName" size="30" name="name">
-            </form>
-            {% for character in characters %}
-                <form action="{{ url_for('delete_character') }}" method="post">
-                    <input type="hidden" name="name" value="{{ character.name }}">
-                    <dt><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Delete" }}>
-                </form>
-                <form action="{{ url_for('edit_character') }}" method="post">
-                    <input type="hidden" name="name" value="{{ character.name }}">
-                    <dt><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Edit" }}>
-                </form>
-            {% endfor %}
-                {% for message in get_flashed_messages() %}
-                    <div class="alert alert-primary" role="alert">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-primary" role="alert">
+            {{ message }}
         </div>
-    </div>
-    <div class="container px-1 py-1" name="Characters">
-        <h3>Characters</h3>
-        <ul class="characters list-unstyled">
-        {% for character in characters %}
-            <li class="row gy-20 justify-content-md-center">
-                <h6>{{ character.name }}</h6>
-                <form action="{{ url_for('add_relationship') }}" method="post">
-                  <input type="hidden" name="character1" value="{{character.name}}">
-                  <select id="character2" name="character2">
-                      {% for character2 in characters %}
-                          <option>{{character2.name}}</option>
-                      {% endfor %}
-                      <input type="submit">
-                  </select>
-                </form>
-            </li>
-        {% else %}
-            <li><em>No characters added.</em></li>
-        {% endfor %}
-        </ul>
+    {% endfor %}
+    <div class="container">
+        <div class="row">
+            <div class="col-3 px-1 py-1">
+                <h3>Characters</h3>
+                <ul class="list-unstyled">
+                {% for character in characters %}
+                    <li class="row gy-20 justify-content-md-center">
+                        <h5>{{ character.name }}</h5>
+                        <div class="row">
+                            <form class="col" action="{{ url_for('edit_character') }}" method="post">
+                                <input type="hidden" name="name" value="{{ character.name }}">
+                                <input type="submit" class="btn btn-secondary btn-sm" value={{ "Edit" }}>
+                            </form>
+                            <form class="col" action="{{ url_for('delete_character') }}" method="post">
+                                <input type="hidden" name="name" value="{{ character.name }}">
+                                <input type="submit" class="btn btn-secondary btn-sm" value={{ "Delete" }}>
+                            </form>
+                        </div>
+                        <div class="row">
+                            <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#{{  character.name }}relationships" aria-expanded="false" aria-controls="showRelationships">
+                                Show Relationships
+                            </button>
+                            <div class="collapse" id="{{  character.name }}relationships">
+                                <div class="well">
+                                    {%  for relationship in relationships %}
+                                        {%  if relationship.character1 == character.name or relationship.character2 == character.name %}
+                                            <b>{{ relationship.character1 }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.character2 }}</b>
+                                            <br>
+                                        {% endif %}
+                                    {% else %}
+                                        <i>No relationships present</i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% else %}
+                    <li><em>No characters added.</em></li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="col-9">
+                <h1 class="display-3">Family Tree Creator</h1>
+                <div class="container px-1 py-1">
+                    <div class="row">
+                        <h2>Add Character</h2>
+                        <form action="{{ url_for('add_character') }}" method="post" class="add-entry">
+                            <label for="inputName" class="form-label">Name</label>
+                            <input type="text" id="inputName" size="30" name="name">
+                            <input type="submit" class="btn btn-primary btn-sm" value={{ "Add" }}>
+                        </form>
+                    </div>
+                    {%  if characters|length > 1 %}
+                        <h2>Add Relationship</h2>
+                        <form action="{{ url_for('add_relationship') }}" method="post">
+                            <label for="character1">Character 1</label>
+                            <select class="mb-1 mt-1" id="character1" name="character1">
+                                {% for character1 in characters %}
+                                  <option>{{character1.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <label for="character2">Character 2</label>
+                            <select class="mb-1 mt-1" id="character2" name="character2">
+                                {% for character2 in characters %}
+                                  <option>{{character2.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <label for="type">Type</label>
+                            <select class="mb-1 mt-1" id="type" name="type">
+                                <option>Parent - Child</option>
+                                <option>Sibling - Sibling</option>
+                                <option>Spouse - Spouse</option>
+                                <option>Partner - Partner</option>
+                                <option>Custom</option>
+                            </select>
+                            <div class="mb-1 mt-1" id="custom"></div>
+                            <script type="text/javascript">
+                                $('#type').on('change', function () {
+                                    let selected = $( "#type option:selected" ).text();
+                                    if(selected === "Custom") $("#custom").html("<input type=\"text\" id=\"inputType\" size=\"10\" name=\"custom_type\">");
+                                    else $("#custom").html("");
+                                });
+                            </script>
+                            <input class="mb-1 mt-1" type="submit" value="Add Relationship">
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
