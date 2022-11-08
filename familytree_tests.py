@@ -36,7 +36,6 @@ class FamilytreeTestCase(unittest.TestCase):
         rv = self.app.post('/add-character', data=dict(
             name='Charles'
         ), follow_redirects=True)
-        #assert rv.data.count(b'Charles') == 2
         assert b'Added Charles' in rv.data
 
         rv = self.app.post('/add-character', data=dict(
