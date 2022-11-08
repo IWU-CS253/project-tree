@@ -1,4 +1,20 @@
 header {
-    background-color: aqua;
-    text-color: black;
+    background-color: darkgray;
+}
+
+aside {
+    background-color: lightblue;
+}
+
+section {
+    background-color: lightcyan;
+}
+
+h1 {
+    padding: 10px;
+}
+
+h3 {
+    padding: 15px;
+    margin-left: 350px;
 }
