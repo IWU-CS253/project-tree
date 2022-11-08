@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-    Flaskr
-    ~~~~~~
+    Family Tree Creator
+    ---------------------
 
-    A microblog example application written as Flask tutorial with
-    Flask and sqlite3.
+    Some Code was Adapted from:
+    Flaskr
+
+    A simple webapp for creating family trees for fictional characters
+    and real families alike. Built on code from the Flaskr Microblogger Webapp.
+    See LICENSE for more details.
 
     :copyright: (c) 2015 by Armin Ronacher.
     :license: BSD, see LICENSE for more details.
+    
+   
 """
+
 
 import os
 from sqlite3 import dbapi2 as sqlite3
@@ -54,6 +61,7 @@ def get_db():
     """
     if not hasattr(g, 'sqlite_db'):
         g.sqlite_db = connect_db()
+    g.sqlite_db.execute('pragma foreign_keys=on')
     return g.sqlite_db
 
 
@@ -68,7 +76,9 @@ def show_tree():
     db = get_db()
     cur = db.execute('SELECT name FROM characters')
     characters = cur.fetchall()
-    return render_template('show_tree.html', characters=characters)
+    cur = db.execute('SELECT character1, character2, type, description FROM relationships')
+    relationships = cur.fetchall()
+    return render_template('show_tree.html', characters=characters, relationships=relationships)
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -83,4 +93,45 @@ def add_character():
                [name])
     db.commit()
     flash('Added ' + name)
+    return redirect(url_for('show_tree'))
+
+
+@app.route('/add_relationship', methods=['POST'])
+def add_relationship():
+    db = get_db()
+    if request.form['type'] == 'Custom':
+        db.execute('INSERT INTO relationships (character1, character2, type, description) VALUES (?,?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['custom_type'], request.form['description']])
+    else:
+        db.execute('INSERT INTO relationships (character1, character2, type, description) VALUES (?,?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['type'], request.form['description']])
+    db.commit()
+    flash('added relationship')
+    return redirect(url_for('show_tree'))
+
+
+@app.route('/delete', methods=['POST'])
+def delete_character():
+    db = get_db()
+    db.execute('delete from characters where name = ?', [request.form['name']])
+    db.commit()
+    flash('character was deleted')
+    return redirect(url_for('show_tree'))
+
+
+@app.route('/edit', methods=['POST'])
+def edit_character():
+    db = get_db()
+    cur = db.execute('select name from characters where name = ?', [request.form['name']])
+    characters = cur.fetchone()
+    flash('moved to edit page')
+    return render_template('edit.html', characters=characters)
+
+
+@app.route('/save_edit', methods=['POST'])
+def save_edit_character():
+    db = get_db()
+    db.execute('update characters set name = ? where name = ?', [request.form['name'], request.form['rename']])
+    db.commit()
+    flash('character was edited')
     return redirect(url_for('show_tree'))
