@@ -18,11 +18,11 @@ Team Contract
 
 - 10/25/22-10/31/22: Zach
 - 11/1/22-11/7/22: Grace
-- 11/8/22-11/14: Azeem
-- 11/15-11/21: Josh
-- 11/22-11/28: Jeff
-- 11/29-12/5: Grace
-- 12/6-12/12: Azeem
+- 11/8/22-11/14: Josh
+- 11/15-11/21: Jeff
+- 11/22-11/28: Grace
+- 11/29-12/5: Josh
+- 12/6-12/12: Jeff
 
 ### Decision-Making
 - Decisions with disagreement will be made by majority rule—there are five of us, so in general there will not be ties

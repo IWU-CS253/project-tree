@@ -75,9 +75,12 @@ def close_db(error):
 @app.route('/', methods=['GET'])
 def show_tree():
     db = get_db()
-    cur = db.execute('SELECT name FROM characters')
+    cur = db.execute('SELECT name, id FROM characters')
     characters = cur.fetchall()
-    cur = db.execute('SELECT character1, character2, type, description FROM relationships')
+    cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
+                     'FROM relationships AS r '
+                     'JOIN characters AS c1 ON r.character1 = c1.id '
+                     'JOIN characters AS c2 ON r.character2 = c2.id')
     relationships = cur.fetchall()
     return render_template('show_tree.html', characters=characters, relationships=relationships)
 
@@ -111,7 +114,7 @@ def add_relationship():
 @app.route('/delete', methods=['POST'])
 def delete_character():
     db = get_db()
-    db.execute('delete from characters where name = ?', [request.form['name']])
+    db.execute('delete from characters where id = ?', [request.form['id']])
     db.commit()
     flash('character was deleted')
     return redirect(url_for('show_tree'))
@@ -120,7 +123,7 @@ def delete_character():
 @app.route('/edit', methods=['POST'])
 def edit_character():
     db = get_db()
-    cur = db.execute('select name from characters where name = ?', [request.form['name']])
+    cur = db.execute('select id, name from characters where id = ?', [request.form['id']])
     characters = cur.fetchone()
     flash('moved to edit page')
     return render_template('edit.html', characters=characters)
@@ -129,7 +132,7 @@ def edit_character():
 @app.route('/save_edit', methods=['POST'])
 def save_edit_character():
     db = get_db()
-    db.execute('update characters set name = ? where name = ?', [request.form['name'], request.form['rename']])
+    db.execute('update characters set name = ? where id = ?', [request.form['name'], request.form['id']])
     db.commit()
     flash('character was edited')
     return redirect(url_for('show_tree'))
