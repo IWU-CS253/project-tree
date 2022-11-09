@@ -24,23 +24,23 @@
                         <h5>{{ character.name }}</h5>
                         <div class="row">
                             <form class="col" action="{{ url_for('edit_character') }}" method="post">
-                                <input type="hidden" name="name" value="{{ character.name }}">
+                                <input type="hidden" name="id" value="{{ character.id }}">
                                 <input type="submit" class="btn btn-secondary btn-sm" value={{ "Edit" }}>
                             </form>
                             <form class="col" action="{{ url_for('delete_character') }}" method="post">
-                                <input type="hidden" name="name" value="{{ character.name }}">
+                                <input type="hidden" name="id" value="{{ character.id }}">
                                 <input type="submit" class="btn btn-secondary btn-sm" value={{ "Delete" }}>
                             </form>
                         </div>
                         <div class="row">
-                            <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#{{  character.name }}relationships" aria-expanded="false" aria-controls="showRelationships">
+                            <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#relationships{{ character.id }}" aria-expanded="false" aria-controls="showRelationships">
                                 Show Relationships
                             </button>
-                            <div class="collapse" id="{{  character.name }}relationships">
+                            <div class="collapse" id="relationships{{ character.id }}">
                                 <div class="well">
                                     {%  for relationship in relationships %}
-                                        {%  if relationship.character1 == character.name or relationship.character2 == character.name %}
-                                            <b>{{ relationship.character1 }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.character2 }}</b>
+                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
+                                            <b>{{ relationship.char1_name }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.char2_name }}</b>
                                             {% if relationship.description %}
                                                 {{ relationship.description }}
                                                 <br>
@@ -76,14 +76,14 @@
                             <label for="character1">Character 1</label>
                             <select class="mb-1 mt-1" id="character1" name="character1">
                                 {% for character1 in characters %}
-                                  <option>{{character1.name}}</option>
+                                  <option value="{{ character1.id }}">{{character1.name}}</option>
                                 {% endfor %}
                             </select>
                             <br>
                             <label for="character2">Character 2</label>
                             <select class="mb-1 mt-1" id="character2" name="character2">
                                 {% for character2 in characters %}
-                                  <option>{{character2.name}}</option>
+                                  <option value="{{ character2.id }}">{{character2.name}}</option>
                                 {% endfor %}
                             </select>
                             <br>
@@ -97,10 +97,11 @@
                             </select>
                             <br>
                             <div class="mb-1 mt-1" id="custom"></div>
+                            <div class="mb-1 mt-1" id="custom"></div>
                             <script type="text/javascript">
                                 $('#type').on('change', function () {
                                     let selected = $( "#type option:selected" ).text();
-                                    if(selected === "Custom") $("#custom").html("<input type=\"text\" id=\"inputType\" size=\"10\" name=\"custom_type\">");
+                                    if(selected === "Custom") $("#custom").html("<input type="text" id="inputType" size="10" name="custom_type">");
                                     else $("#custom").html("");
                                 });
                             </script>
