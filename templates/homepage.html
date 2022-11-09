@@ -24,10 +24,19 @@
                         </li>
                         <li class="py-1">
                             <b>Local Trees</b>
-                                    <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
-                                        <label for="inputName" class="form-label">Name</label>
-                                        <input type="text" id="inputName" size="30" name="tree_name">
-                                    </form>
+                                <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
+                                    <label for="inputName" class="form-label">Add a Tree</label>
+                                    <input type="text" id="inputName" size="30" name="tree_name">
+                                </form>
+                                <form action="{{ url_for('show_tree') }}" method="post">
+                                    <dt><label size="30" class="form-label">Local Trees</label>
+                                    <br>
+                                    {% for tree in trees %}
+                                        <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value={{ tree.tree_name }}>
+                                        <br>
+                                    {%  endfor  %}
+                                    </dt>
+                                </form>
                         </li>
                     </ul>
                 </div>
