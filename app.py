@@ -132,7 +132,7 @@ def edit_character():
 @app.route('/save_edit', methods=['POST'])
 def save_edit_character():
     db = get_db()
-    db.execute('update characters set name = ? where name = ?', [request.form['name'], request.form['rename']])
+    db.execute('update characters set name = ? where id = ?', [request.form['name'], request.form['id']])
     db.commit()
     flash('character was edited')
     return redirect(url_for('show_tree'))
