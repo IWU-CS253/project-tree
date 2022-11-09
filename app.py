@@ -72,7 +72,21 @@ def show_tree():
 
 @app.route('/', methods=['GET'])
 def home_page():
-    return render_template('homepage.html')
+    db = get_db()
+    cur = db.execute('SELECT tree_name FROM trees')
+    trees = cur.fetchall()
+    return render_template('homepage.html', trees=trees)
+
+@app.route('/add-tree', methods=['POST'])
+def add_tree():
+    """Adds a new character"""
+    db = get_db()
+    tree_name = request.form['tree_name']
+    db.execute('INSERT INTO trees (tree_name) VALUES (?)',
+               [tree_name])
+    db.commit()
+    flash('Added ' + tree_name)
+    return redirect(url_for('homepage.html'))
 
 @app.route('/add-character', methods=['POST'])
 def add_character():

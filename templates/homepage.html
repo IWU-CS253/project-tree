@@ -24,6 +24,10 @@
                         </li>
                         <li class="py-1">
                             <b>Local Trees</b>
+                                    <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
+                                        <label for="inputName" class="form-label">Name</label>
+                                        <input type="text" id="inputName" size="30" name="tree_name">
+                                    </form>
                         </li>
                     </ul>
                 </div>
