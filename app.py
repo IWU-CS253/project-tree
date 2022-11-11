@@ -74,14 +74,17 @@ def close_db(error):
 @app.route('/tree', methods=['GET'])
 def show_tree():
     db = get_db()
-    cur = db.execute('SELECT name, id FROM characters')
+    cur = db.execute('SELECT tree_name, tree_id FROM trees')
+    trees = cur.fetchall()
+
+    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [request.form['tree_id']])
     characters = cur.fetchall()
+
     cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
-                     'FROM relationships AS r '
-                     'JOIN characters AS c1 ON r.character1 = c1.id '
-                     'JOIN characters AS c2 ON r.character2 = c2.id')
+                     'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
+                     'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [request.form['tree_id']])
     relationships = cur.fetchall()
-    return render_template('show_tree.html', characters=characters, relationships=relationships)
+    return render_template('show_tree.html', trees=trees, characters=characters, relationships=relationships)
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -100,7 +103,7 @@ def add_tree():
     db.commit()
     flash('Added ' + tree_name)
     return redirect(url_for('home_page'))
-
+'''
 @app.route('/home_trees', methods=['POST'])
 def home_trees():
     db = get_db()
@@ -108,7 +111,7 @@ def home_trees():
     trees = cur.fetchall()
     flash('page is showing trees')
     return render_template('homepage.html', trees=trees)
-
+'''
 @app.route('/add-character', methods=['POST'])
 def add_character():
     """Adds a new character"""

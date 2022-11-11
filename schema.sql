@@ -1,5 +1,5 @@
-drop table if exists relationships;
 drop table if exists characters;
+drop table if exists relationships;
 drop table if exists trees;
 
 CREATE TABLE characters (
@@ -7,12 +7,6 @@ CREATE TABLE characters (
     name TEXT not null,
     description TEXT,
     tree_id_character INT
-);
-
-CREATE TABLE characters (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    description TEXT
 );
 
 CREATE TABLE relationships (

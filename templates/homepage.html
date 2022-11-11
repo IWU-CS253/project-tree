@@ -28,11 +28,12 @@
                                     <label for="inputName" class="form-label">Add a Tree</label>
                                     <input type="text" id="inputName" size="30" name="tree_name">
                                 </form>
-                                <form action="{{ url_for('show_tree') }}" method="post">
+                                <form action="{{ url_for('show_tree') }}" method="get">
                                     <dt><label size="30" class="form-label">Local Trees</label>
                                     <br>
                                     {% for tree in trees %}
                                         <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value={{ tree.tree_name }}>
+                                        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
                                         <br>
                                     {%  endfor  %}
                                     </dt>
