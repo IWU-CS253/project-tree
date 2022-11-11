@@ -39,18 +39,20 @@
                             <div class="collapse" id="relationships{{ character.id }}">
                                 <div class="well">
                                     {%  for relationship in relationships %}
-                                        {%  if relationship.character1 == character.name or relationship.character2 == character.name %}
-                                            <b>{{ relationship.char_1 }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.char2_name }}</b>
-                                            <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
-                                                <input type="hidden" name="character1" value="{{ relationship.character1 }}">
-                                                <input type="hidden" name="character2" value="{{ relationship.character2 }}">
-                                                <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
-                                            </form>
+                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
+                                            <b>{{ relationship.char1_name }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.char2_name }}</b>
                                             {% if relationship.description %}
                                                 {{ relationship.description }}
                                                 <br>
                                             {% endif %}
                                             <br>
+                                            <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
+                                                <input type="hidden" name="character1" value="{{ relationship.character1 }}">
+                                                <input type="hidden" name="character2" value="{{ relationship.character2 }}">
+                                                <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
+                                            </form>
+                                            {% else %}
+                                            <i>No relationships present</i>
                                         {% endif %}
                                     {% else %}
                                         <i>No relationships present</i>
