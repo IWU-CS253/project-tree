@@ -18,9 +18,6 @@ class FamilytreeTestCase(unittest.TestCase):
         os.unlink(familytree.app.config['DATABASE'])
 
     # A simple placeholder test; can be removed once first tests are added
-    def test_empty_db(self):
-        rv = self.app.get('/')
-        assert b'No characters added.' in rv.data
 
     def test_add_character(self):
         rv = self.app.post('/add-character', data=dict(
@@ -126,7 +123,7 @@ class FamilytreeTestCase(unittest.TestCase):
         ), follow_redirects=True)
 
         rv = self.app.post('/add_relationship', data=dict(
-            character1='Char1', character2='Char2', type='Spouse - Spouse', description=''
+            character1=1, character2=2, type='Spouse - Spouse', description=''
         ), follow_redirects=True)
 
         assert b'Char1' in rv.data
@@ -165,6 +162,10 @@ class FamilytreeTestCase(unittest.TestCase):
         assert b'<b>George</b> <i>Friend - Friend</i> <b>Martha</b>' in rv.data
 
         assert b'Friends since preschool' in rv.data
+
+    def test_empty_db(self):
+        rv = self.app.get('/')
+        assert b'No characters added.' in rv.data
 
 if __name__ == '__main__':
     unittest.main()
