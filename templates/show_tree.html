@@ -46,6 +46,13 @@
                                                 <br>
                                             {% endif %}
                                             <br>
+                                            <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
+                                                <input type="hidden" name="character1" value="{{ relationship.character1 }}">
+                                                <input type="hidden" name="character2" value="{{ relationship.character2 }}">
+                                                <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
+                                            </form>
+                                            {% else %}
+                                            <i>No relationships present</i>
                                         {% endif %}
                                     {% else %}
                                         <i>No relationships present</i>

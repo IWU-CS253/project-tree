@@ -136,3 +136,13 @@ def save_edit_character():
     db.commit()
     flash('character was edited')
     return redirect(url_for('show_tree'))
+
+
+@app.route('/delete_relationship', methods=['POST'])
+def delete_relationship():
+    db = get_db()
+    db.execute('DELETE FROM relationships WHERE character1 = ? AND character2 = ?',
+               [request.form['character1'], request.form['character2']])
+    db.commit()
+    flash('relationship was deleted')
+    return redirect(url_for('show_tree'))
