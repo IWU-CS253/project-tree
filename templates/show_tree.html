@@ -41,6 +41,11 @@
                                     {%  for relationship in relationships %}
                                         {%  if relationship.character1 == character.name or relationship.character2 == character.name %}
                                             <b>{{ relationship.character1 }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.character2 }}</b>
+                                            <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
+                                                <input type="hidden" name="character1" value="{{ relationship.character1 }}">
+                                                <input type="hidden" name="character2" value="{{ relationship.character2 }}">
+                                                <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
+                                            </form>
                                             {% if relationship.description %}
                                                 {{ relationship.description }}
                                                 <br>
