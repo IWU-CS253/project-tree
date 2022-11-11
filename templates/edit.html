@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Family Tree</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+    <body>
+      <div class="container-xxl">
+         <form action="{{ url_for('save_edit_character') }}" method="post">
+            <dl>
+              <dt><label for="inputName" class="form-label">Name</label>
+              <dt><input type="text" size="30" name="name" class="form-control" id="inputName" value="{{ characters.name }}"></dt>
+              <dt><input type="submit" class="btn btn-primary btn-sm mb-3" value={{ "Edit" }}>
+              <input type="hidden" name="rename" value="{{ characters.name }}">
+            </dl>
+         </form>
+      </div>
+    </body>
+</html>

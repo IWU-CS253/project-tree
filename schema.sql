@@ -10,9 +10,9 @@ CREATE TABLE characters (
 );
 
 CREATE TABLE relationships (
-    character1 INT,
-    character2 INT,
-    type TEXT not null,
+    character1 TEXT,
+    character2 TEXT,
+    type TEXT,
     description TEXT,
     tree_id_relationship INT,
     PRIMARY KEY (character1, character2),
