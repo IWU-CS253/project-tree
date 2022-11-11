@@ -116,6 +116,26 @@ class FamilytreeTestCase(unittest.TestCase):
 
         assert b'Charles' in deleted_rv.data
 
+    def test_delete_relationship(self):
+        rv = self.app.post('/add-character', data=dict(
+            name='Char1'
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add-character', data=dict(
+            name='Char2'
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add_relationship', data=dict(
+            character1='Char1', character2='Char2', type='Spouse - Spouse', description=''
+        ), follow_redirects=True)
+
+        assert b'Char1' in rv.data
+
+        deleted_rv = self.app.post('/delete_relationship', data=dict(
+            character1='Char1', character2='Char2'), follow_redirects=True)
+
+        assert b'relationship was deleted' in deleted_rv.data
+
     def test_relationship_adder_appearance(self):
         # Tests to ensure that the add relationship fields appear when (and only one) 2 or more characters exist
         rv = self.app.get('/')
