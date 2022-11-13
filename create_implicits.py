@@ -1,21 +1,22 @@
-import app
+# This Character and Graph classes in this code aim to use a graph structure to simplify running through relationships
+# between characters, represented as nodes and directional (parent or child) edges.
+
+# The classes are built upon code written by Andrew Shallue, which itself was a modification of code
+# found in chapter 6 of Problem Solving with Algorithms and Data Structures using Python, by Miller and Ranum
 
 class Character:
     def __init__(self, num):
         self.id = num
-        self.children = []  # list of children Character
-        self.parents = []  # list of parent Character
-        self.sibling_num = None  # To store a sibling code if any are added
+        self.children = []  # list of children characters
+        self.parents = []  # list of parent characters
+        self.sibling_num = 0  # To store a sibling code if any are added. Sibling codes allow all siblings to be
+        # indirectly connected; all characters that share the same sibling_num are siblings unless it is 0
 
-    # Adds a child Character
     def addChild(self, child):
         self.children.append(child)
 
     def addParent(self, parent):
         self.parents.append(parent)
-
-    def __str__(self):
-        return str(self.id)
 
 
 class Graph:
@@ -33,25 +34,9 @@ class Graph:
     def addParent_Child(self, p, c):
         self.charList[p].addChild(self.charList[c])
         self.charList[c].addParent(self.charList[c])
-        
+
     def getChar(self, n):  # checks whether 'n' is in the graph
         if n in self.charList:
             return self.charList[n]
         else:
             return None
-        
-
-def createGraph(relationships, characters):
-    graph = Graph()
-    for character in characters:
-        graph.addCharacter(character['ID'])
-    for relationship in relationships:
-        if relationship['TYPE'] == 'Parent - Child':
-            if graph.getChar(relationship['CHARACTER1']):
-
-
-            
-            
-            
-        
-
