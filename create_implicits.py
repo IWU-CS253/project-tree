@@ -78,6 +78,50 @@ def createGraph(characters, relationships):
     return graph
 
 
+def implicit_siblings(graph):
+    """Given a parent - child and sibling - sibling graph, adds all implicit siblings based on shared
+    parents and returns the new graph"""
+    # Finds the highest existing sib_number and sets the incrementer above it, that way any new sibling numbers needed
+    # will not conflict with existing ones.
+    sib_incrementor = 1
+    for char in graph.charList:
+        if graph.getChar(char).sibling_num > sib_incrementor:
+            sib_incrementor = graph.getChar(char).sibling_num + 1
+
+    for char in graph.charList:
+        if len(graph.getChar(char).children) > 1:  # if a character has multiple children
+            # Find any existing sibling numbers among the children
+            sibling_numbers = []
+            for child in graph.getChar(char).children:
+                if child.sibling_num != 0:
+                    sibling_numbers.append(child.sibling_num)
+
+            if len(sibling_numbers) == 0:  # If none had a sibling number, generate a new one and assign it to all
+                for child in graph.getChar(char).children:
+                    child.sibling_num = sib_incrementor
+                    sib_incrementor += 1
+
+            # If all have sibling numbers, and they are all the same, move on to the next character
+            if len(sibling_numbers) == len(graph.getChar(char).children) and len(set(sibling_numbers)) == 1:
+                continue
+
+            if len(sibling_numbers) == 1:  # If only one had a sibling number, give it to the rest
+                for child in graph.getChar(char).children:
+                    child.sibling_num = sibling_numbers[0]
+
+            # If there are multiple sibling numbers, all need to be unified, along with characters with those numbers
+            for subChar in graph.charList:
+                if graph.getChar(subChar).sibling_num in sibling_numbers:
+                    graph.getChar(subChar).sibling_num = sibling_numbers[0]
+
+    return graph
+
+
+def add_implicits(graph):
+    graph = implicit_siblings(graph)
+    return graph
+
+
 def testGraph():
     characters = [{'ID': 1}, {'ID': 2}, {'ID': 3}, {'ID': 4}, {'ID': 5}, {'ID': 6}, {'ID': 7}, {'ID': 8}, {'ID': 9}]
     relationships = [{'CHARACTER1': 1, 'CHARACTER2': 2, 'TYPE': 'Parent - Child'},
@@ -89,7 +133,8 @@ def testGraph():
                      {'CHARACTER1': 8, 'CHARACTER2': 9, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 9, 'CHARACTER2': 1, 'TYPE': 'Sibling - Sibling'}, ]
 
-    graph = createGraph(characters, relationships)
+    base_graph = createGraph(characters, relationships)
+    graph = add_implicits(base_graph)
     for child in graph.getChar(1).children:
         print(child.id)
     print(graph.getChar(8).children[0].id)
