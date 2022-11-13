@@ -117,8 +117,24 @@ def implicit_siblings(graph):
     return graph
 
 
+def implicit_parents(graph):
+    for character in graph.charList:
+        char = graph.getChar(character)
+        if len(char.parents) > 0 and char.sibling_num != 0:  # If a character has a parent and has siblings
+            for subCharacter in graph.charList:
+                subChar = graph.getChar(subCharacter)
+                # If a character is one of the siblings of the above character, give them all of their parents
+                if subChar.sibling_num == char.sibling_num:
+                    for parent in char.parents:
+                        if parent not in subChar.parents:  # Prevents duplicates in the parents list
+                            subChar.parents.append(parent)
+
+    return graph
+
+
 def add_implicits(graph):
     graph = implicit_siblings(graph)
+    graph = implicit_parents(graph)
     return graph
 
 
