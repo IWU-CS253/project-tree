@@ -18,6 +18,7 @@
 
 
 import os
+import create_implicits
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, g, redirect, url_for, render_template, flash
 
@@ -146,3 +147,8 @@ def delete_relationship():
     db.commit()
     flash('relationship was deleted')
     return redirect(url_for('show_tree'))
+
+@app.cli.command('testgraph')
+def implicit_test_graph():
+    create_implicits.testGraph()
+
