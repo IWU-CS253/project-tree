@@ -16,8 +16,8 @@ CREATE TABLE relationships (
     description TEXT,
     tree_id_relationship INT,
     PRIMARY KEY (character1, character2),
-    FOREIGN KEY (character1) references characters(id),
-    FOREIGN KEY (character2) references characters(id)
+    FOREIGN KEY (character1) references characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (character2) references characters(id) ON DELETE CASCADE
 );
 
 CREATE TABLE trees  (

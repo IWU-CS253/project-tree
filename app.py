@@ -75,7 +75,7 @@ def close_db(error):
 def show_tree():
     db = get_db()
     cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE tree_id = ?', [request.args['tree_id']])
-    tree = cur.fetchall()
+    tree = cur.fetchone()
 
     cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [request.args['tree_id']])
     characters = cur.fetchall()
@@ -153,10 +153,11 @@ def delete_character():
 @app.route('/edit', methods=['POST'])
 def edit_character():
     db = get_db()
+    tree_id = request.form['tree_id']
     cur = db.execute('select id, name from characters where id = ?', [request.form['id']])
     characters = cur.fetchone()
     flash('moved to edit page')
-    return render_template('edit.html', characters=characters)
+    return render_template('edit.html', characters=characters, tree_id=tree_id)
 
 
 @app.route('/save_edit', methods=['POST'])
