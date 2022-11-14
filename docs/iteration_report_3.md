@@ -35,7 +35,7 @@ function, which proved challenging.
 
 Adjustments and Changes
 ---------------------
-- Discussed techniques for tree_display; plan to use javascript library _______________
+- Discussed techniques for tree_display; plan to use javascript library Vis
 - Returned to an id-based database model
 - Considering using implicit relationships graph tools to help with display 
 
@@ -48,12 +48,15 @@ Next Iteration Plan
 ---------------------
 Iteration Week 4 User Stories:
 
-- Finish implicit relationships - Josh 
+- Finish implicit relationships - Josh
 - Tree Display: Characters & Relationships
-  - Create functions to pass data from the tree to the display framework: Zach 
-  - Integrate the display framework into the show_tree page: Grace
-  - Use display framework to show characters as nodes and relationships as edges: Grace 
+  - Create functions to pass data from the tree to Vis: Zach 
+  - Integrate the Vis into the show_tree page: Grace
+  - Use Vis to show characters as nodes and relationships as edges: Grace 
   - Style / edit display to show relevant information about characters (eg. names): Jeff
+
+Our assignments are a bit nebulous at the moment, as we are still not certain what the steps will be for creating and
+integrating a Vis display. These will become more concrete when we figure out the exact steps at our meeting on Tuesday.
 
 
 Future Iteration Plans
