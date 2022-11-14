@@ -154,13 +154,15 @@ class FamilytreeTestCase(unittest.TestCase):
         rv = self.app.post('/add_relationship', data=dict(
             character1=1, character2=2, type='Spouse - Spouse', description=''
         ), follow_redirects=True)
-        assert b'<b>George</b> <i>Spouse - Spouse</i> <b>Martha</b>' in rv.data
+        assert b'<b>George</b> & <b>Martha</b>:' in rv.data
+        assert b'<i>Spouse - Spouse</i>' in rv.data  # Newlines require a bucket of spaces to imitate for some reason
+        # So for now we're separating the assertions
 
         rv = self.app.post('/add_relationship', data=dict(
             character1=1, character2=2,  custom_type='Friend - Friend', type='Custom', description='Friends since preschool'
         ), follow_redirects=True)
-        assert b'<b>George</b> <i>Friend - Friend</i> <b>Martha</b>' in rv.data
-
+        assert b'<b>George</b> & <b>Martha</b>:' in rv.data
+        assert b'<i>Friend - Friend</i>'
         assert b'Friends since preschool' in rv.data
 
     def test_empty_db(self):
