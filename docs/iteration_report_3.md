@@ -31,7 +31,10 @@ Difficulties
 - Creation of multiple trees involved reworking database and site navigation model, and by extension every single 
 function, which proved challenging.
 - Creating algorithms is hard.
-- Need to be more careful with git merge conflict resolution and with keeping unit tests up-to-date
+- Need to be more careful with git merge conflict resolution 
+- Need to be much more careful about keeping unit tests up to date. A change finished late in the iteration requires 
+all unit tests to be changed / rewritten, which we did not have time for, meaning all tests are currently failing though
+the app is functional.
 
 Adjustments and Changes
 ---------------------
