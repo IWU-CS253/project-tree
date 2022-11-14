@@ -154,7 +154,7 @@ def delete_character():
 def edit_character():
     db = get_db()
     tree_id = request.form['tree_id']
-    cur = db.execute('select id, name from characters where id = ?', [request.form['id']])
+    cur = db.execute('select id, name from characters where id = ? and tree_id_character = ?', [request.form['id'], tree_id])
     characters = cur.fetchone()
     flash('moved to edit page')
     return render_template('edit.html', characters=characters, tree_id=tree_id)
