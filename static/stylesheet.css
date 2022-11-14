@@ -1,18 +1,13 @@
 
 header {
-    background-color: darkgray;
-}
-
-aside {
-    background-color: lightblue;
-}
-
-section {
-    background-color: lightcyan;
+    color: #000000;
+    background-color: #16C58B;
 }
 
 h1 {
     padding: 10px;
+    color: #000000;
+    background-color: #16C58B;
 }
 
 h3 {

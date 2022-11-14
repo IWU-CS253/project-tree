@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="static/stylesheet.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <style>
         #custom {visibility: hidden;}
@@ -16,6 +17,12 @@
             {{ message }}
         </div>
     {% endfor %}
+    <div class="container-fluid min-vh-100 d-flex flex-column">
+        <header class="display-3 row border-bottom border-3 border-dark">
+            <div class="col-3">
+                <a class="btn" role="button" href="http://127.0.0.1:5000/" aria-label="Return Home Button">
+                    <img src="/static/home_icon.png" height=100px width=100px>
+                </a>
     <div class="container">
         <div class="row">
             <div class="col-3 px-1 py-1">
@@ -72,7 +79,11 @@
                 </ul>
             </div>
             <div class="col-9">
-                <h1 class="display-3">Family Tree Creator</h1>
+                Family Tree Creator
+            </div>
+        </header>
+        <div class="row">
+            <div class="col-3 px-1 py-1">
                 <div class="container px-1 py-1">
                     <div class="row">
                         <h2>Add Character</h2>
@@ -80,7 +91,7 @@
                             <label for="inputName" class="form-label">Name</label>
                             <input type="text" id="inputName" size="30" name="name">
                             <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                            <input type="submit" class="btn btn-primary btn-sm" value={{ "Add" }}>
+                            <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Add Character Button" value={{ "Add" }}>
                         </form>
                         <form action="{{ url_for('home_page') }}" method="get">
                             <input type="submit" class="btn btn-primary btn-sm" value={{ "home" }}>
@@ -129,10 +140,65 @@
                             <label for="description">Description (Optional)</label>
                             <textarea class="form-control" id="description" name="description"></textarea>
                             <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                            <input class="mb-1 mt-1" type="submit" value="Add Relationship">
+                            <input class="mb-1 mt-1" type="submit" value="Add Relationship" aria-labelledby="Add Relationship Button">
                         </form>
                     {% endif %}
                 </div>
+                <br>
+                <div class="row justify-content-md-center">
+                    <h2>Characters</h2>
+                </div>
+                <ul class="list-unstyled">
+                {% for character in characters %}
+                    <li class="row gy-20 justify-content-md-center">
+                        <div class="row fs-4">
+                           {{ character.name }}
+                            <form class="col" action="{{ url_for('edit_character') }}" method="post">
+                                <input type="hidden" name="id" value="{{ character.id }}">
+                                <input type="submit" class="btn btn-secondary btn-sm" aria-labelledby="Edit Character Button" value={{ "Edit" }}>
+                            </form>
+                            <form class="col" action="{{ url_for('delete_character') }}" method="post">
+                                <input type="hidden" name="id" value="{{ character.id }}">
+                                <input type="submit" class="btn btn-secondary btn-sm" aria-labelledby="Delete Character Button" value={{ "Delete" }}>
+                            </form>
+                        </div>
+                        <div class="row">
+                            <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#relationships{{ character.id }}" aria-expanded="false" aria-controls="showRelationships">
+                                Show Relationships
+                            </button>
+                            <div class="collapse" id="relationships{{ character.id }}">
+                                <div class="well">
+                                    {%  for relationship in relationships %}
+                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
+                                            <b>{{ relationship.char1_name }}</b> & <b>{{ relationship.char2_name }}</b>:
+                                            <br>
+                                            <i>{{ relationship.type }}</i>
+                                            {% if relationship.description %}
+                                                {{ relationship.description }}
+                                                <br>
+                                            {% endif %}
+                                            <br>
+                                            <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
+                                                <input type="hidden" name="character1" value="{{ relationship.character1 }}">
+                                                <input type="hidden" name="character2" value="{{ relationship.character2 }}">
+                                                <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship" aria-labelledby="Delete Relationship Button">
+                                            </form>
+                                        {% endif %}
+                                    {% else %}
+                                        <i>No relationships present</i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% else %}
+                    <li><em>No characters added.</em></li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="col-9 border-start border-dark border-3 bg-light">
+                <h2>No display yet, so enjoy this cat</h2>
+                <img src="/static/cat.png">
             </div>
         </div>
     </div>
