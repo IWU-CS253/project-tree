@@ -25,10 +25,12 @@
                         <div class="row">
                             <form class="col" action="{{ url_for('edit_character') }}" method="post">
                                 <input type="hidden" name="id" value="{{ character.id }}">
+                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
                                 <input type="submit" class="btn btn-secondary btn-sm" value={{ "Edit" }}>
                             </form>
                             <form class="col" action="{{ url_for('delete_character') }}" method="post">
                                 <input type="hidden" name="id" value="{{ character.id }}">
+                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
                                 <input type="submit" class="btn btn-secondary btn-sm" value={{ "Delete" }}>
                             </form>
                         </div>
@@ -49,6 +51,7 @@
                                             <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
                                                 <input type="hidden" name="character1" value="{{ relationship.character1 }}">
                                                 <input type="hidden" name="character2" value="{{ relationship.character2 }}">
+                                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
                                                 <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
                                             </form>
                                             {% else %}
@@ -120,6 +123,7 @@
                             </script>
                             <label for="description">Description (Optional)</label>
                             <textarea class="form-control" id="description" name="description"></textarea>
+                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
                             <input class="mb-1 mt-1" type="submit" value="Add Relationship">
                         </form>
                     {% endif %}

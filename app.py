@@ -128,24 +128,26 @@ def add_character():
 @app.route('/add_relationship', methods=['POST'])
 def add_relationship():
     db = get_db()
+    tree_id = request.form['tree_id']
     if request.form['type'] == 'Custom':
-        db.execute('INSERT INTO relationships (character1, character2, type, description) VALUES (?,?,?,?)',
-                   [request.form['character1'], request.form['character2'], request.form['custom_type'], request.form['description']])
+        db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['custom_type'], request.form['description'], tree_id])
     else:
-        db.execute('INSERT INTO relationships (character1, character2, type, description) VALUES (?,?,?,?)',
-                   [request.form['character1'], request.form['character2'], request.form['type'], request.form['description']])
+        db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
+                   [request.form['character1'], request.form['character2'], request.form['type'], request.form['description'], tree_id])
     db.commit()
     flash('added relationship')
-    return redirect(url_for('show_tree'))
+    return redirect(url_for('show_tree', tree_id=tree_id))
 
 
 @app.route('/delete', methods=['POST'])
 def delete_character():
     db = get_db()
+    tree_id = request.form['tree_id']
     db.execute('delete from characters where id = ?', [request.form['id']])
     db.commit()
     flash('character was deleted')
-    return redirect(url_for('show_tree'))
+    return redirect(url_for('show_tree', tree_id=tree_id))
 
 
 @app.route('/edit', methods=['POST'])
@@ -160,17 +162,19 @@ def edit_character():
 @app.route('/save_edit', methods=['POST'])
 def save_edit_character():
     db = get_db()
+    tree_id = request.form['tree_id']
     db.execute('update characters set name = ? where id = ?', [request.form['name'], request.form['id']])
     db.commit()
     flash('character was edited')
-    return redirect(url_for('show_tree'))
+    return redirect(url_for('show_tree', tree_id=tree_id))
 
 
 @app.route('/delete_relationship', methods=['POST'])
 def delete_relationship():
     db = get_db()
+    tree_id = request.form['tree_id']
     db.execute('DELETE FROM relationships WHERE character1 = ? AND character2 = ?',
                [request.form['character1'], request.form['character2']])
     db.commit()
     flash('relationship was deleted')
-    return redirect(url_for('show_tree'))
+    return redirect(url_for('show_tree', tree_id=tree_id))
