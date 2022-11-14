@@ -164,7 +164,7 @@ class FamilytreeTestCase(unittest.TestCase):
         assert b'Friends since preschool' in rv.data
 
     def test_empty_db(self):
-        rv = self.app.get('/')
+        rv = self.app.get('/tree')
         assert b'No characters added.' in rv.data
 
 if __name__ == '__main__':
