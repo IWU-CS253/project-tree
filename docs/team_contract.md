@@ -31,7 +31,7 @@ Team Contract
 ### Group Member Expectations
 
 #### Check-Ins
-- Each group member is responsible for giving a brief check-in on work progress or any potential issues every Wednesday, Friday, and Sunday
+- Each group member is responsible for giving a brief check-in on work progress or any potential issues every Wednesday and Friday
 - Check-ins should include:
   - What they have accomplished
   - What they are working on, and when
@@ -58,17 +58,16 @@ Team Contract
 - Primary method of communication is the group discord.
 
 #### Meeting Times
-- Tuesdays 6:00-7:00 at Tommy's or CNS
+- Tuesdays 6:30-7:30 at Tommy's or CNS
   - Reflect on previous iteration
   - Discuss plans for next iteration
   - Any other issues
-- Thursdays 6:00-7:00 in CNS (Room TBD)
+- Thursdays 6:30-7:30 in CNS (Room TBD)
   - Brief (5-10 minutes) verbal check-in / discussion
-  - Work time 
-  - Last 30 minutes overlaps with Evan's Office Hours, so we can use those if necessary
-- Saturday 9:30-10:30 in CNS (Room TBD)
-  - Brief (5-10 minutes) verbal check-in / dicussion
   - Work time
+- Sunday 8:00-Finishing Report on Discord
+  - Resolve any lingering troubles with week work
+  - Finish Iteration Report
 
 
 
