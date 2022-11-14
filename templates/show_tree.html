@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ tree.name }}</title>
+    <title>{{ tree.tree_name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
@@ -71,11 +71,14 @@
                 <div class="container px-1 py-1">
                     <div class="row">
                         <h2>Add Character</h2>
+                        {% for tree in tree %}
                         <form action="{{ url_for('add_character') }}" method="post" class="add-entry">
                             <label for="inputName" class="form-label">Name</label>
                             <input type="text" id="inputName" size="30" name="name">
+                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
                             <input type="submit" class="btn btn-primary btn-sm" value={{ "Add" }}>
                         </form>
+                        {% endfor %}
                         <form action="{{ url_for('home_page') }}" method="get">
                             <input type="submit" class="btn btn-primary btn-sm" value={{ "home" }}>
                         </form>
