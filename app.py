@@ -4,16 +4,11 @@
     ---------------------
 
     Some Code was Adapted from:
-    Flaskr
+    Flaskr by Armin Ronacher.
 
     A simple webapp for creating family trees for fictional characters
     and real families alike. Built on code from the Flaskr Microblogger Webapp.
     See LICENSE for more details.
-
-    :copyright: (c) 2015 by Armin Ronacher.
-    :license: BSD, see LICENSE for more details.
-    
-   
 """
 
 
@@ -148,6 +143,8 @@ def delete_relationship():
     flash('relationship was deleted')
     return redirect(url_for('show_tree'))
 
+
+# For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
 def implicit_test_graph():
     create_implicits.testGraph()

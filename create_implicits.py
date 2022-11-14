@@ -43,6 +43,9 @@ class Graph:
 
 
 def createGraph(characters, relationships):
+    """Given a set of characters and relationships (sqlite objects including, at minimum, character ids and relationship
+    types), creates a graph object and stores the characters as vertices and parent-child relationships as directional
+    edges. Siblings are given a number, and all characters that share the same sibling number are siblings."""
     graph = Graph()
     sib_incrementer = 1  # Used to generate sibling numbers; always increases every time one is assigned
     for character in characters:
@@ -54,6 +57,7 @@ def createGraph(characters, relationships):
         if relationship['TYPE'] == 'Parent - Child':
             char1.addChild(char2)
             char2.addParent(char1)
+
         # Adds siblings to the graph, and adds implicit siblings transitively
         # Eg if a & b are siblings and b & c are siblings, makes them all siblings via sibling_nums
         if relationship['TYPE'] == 'Sibling - Sibling':
@@ -140,6 +144,7 @@ def add_implicits(graph):
 
 def testGraph():
     characters = [{'ID': 1}, {'ID': 2}, {'ID': 3}, {'ID': 4}, {'ID': 5}, {'ID': 6}, {'ID': 7}, {'ID': 8}, {'ID': 9}]
+    # This format mirrors the way sqlite objects are structured, and how we will access the relevant attributes
     relationships = [{'CHARACTER1': 1, 'CHARACTER2': 2, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 1, 'CHARACTER2': 3, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 3, 'CHARACTER2': 4, 'TYPE': 'Sibling - Sibling'},
