@@ -23,60 +23,6 @@
                 <a class="btn" role="button" href="http://127.0.0.1:5000/" aria-label="Return Home Button">
                     <img src="/static/home_icon.png" height=100px width=100px>
                 </a>
-    <div class="container">
-        <div class="row">
-            <div class="col-3 px-1 py-1">
-                <h3>Characters</h3>
-                <ul class="list-unstyled">
-                {% for character in characters %}
-                    <li class="row gy-20 justify-content-md-center">
-                        <h5>{{ character.name }}</h5>
-                        <div class="row">
-                            <form class="col" action="{{ url_for('edit_character') }}" method="post">
-                                <input type="hidden" name="id" value="{{ character.id }}">
-                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                <input type="submit" class="btn btn-secondary btn-sm" value={{ "Edit" }}>
-                            </form>
-                            <form class="col" action="{{ url_for('delete_character') }}" method="post">
-                                <input type="hidden" name="id" value="{{ character.id }}">
-                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                <input type="submit" class="btn btn-secondary btn-sm" value={{ "Delete" }}>
-                            </form>
-                        </div>
-                        <div class="row">
-                            <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#relationships{{ character.id }}" aria-expanded="false" aria-controls="showRelationships">
-                                Show Relationships
-                            </button>
-                            <div class="collapse" id="relationships{{ character.id }}">
-                                <div class="well">
-                                    {%  for relationship in relationships %}
-                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
-                                            <b>{{ relationship.char1_name }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.char2_name }}</b>
-                                            {% if relationship.description %}
-                                                {{ relationship.description }}
-                                                <br>
-                                            {% endif %}
-                                            <br>
-                                            <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
-                                                <input type="hidden" name="character1" value="{{ relationship.character1 }}">
-                                                <input type="hidden" name="character2" value="{{ relationship.character2 }}">
-                                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                                <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
-                                            </form>
-                                            {% else %}
-                                            <i>No relationships present</i>
-                                        {% endif %}
-                                    {% else %}
-                                        <i>No relationships present</i>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                {% else %}
-                    <li><em>No characters added.</em></li>
-                {% endfor %}
-                </ul>
             </div>
             <div class="col-9">
                 Family Tree Creator
@@ -92,9 +38,6 @@
                             <input type="text" id="inputName" size="30" name="name">
                             <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
                             <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Add Character Button" value={{ "Add" }}>
-                        </form>
-                        <form action="{{ url_for('home_page') }}" method="get">
-                            <input type="submit" class="btn btn-primary btn-sm" value={{ "home" }}>
                         </form>
                     </div>
                     {%  if characters|length > 1 %}
