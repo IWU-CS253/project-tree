@@ -1,10 +1,12 @@
-drop table if exists relationships;
 drop table if exists characters;
+drop table if exists relationships;
+drop table if exists trees;
 
 CREATE TABLE characters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    description TEXT
+    name TEXT not null,
+    description TEXT,
+    tree_id_character INT
 );
 
 CREATE TABLE relationships (
@@ -12,7 +14,13 @@ CREATE TABLE relationships (
     character2 INT,
     type TEXT,
     description TEXT,
-    PRIMARY KEY (character1, character2, type),
-    FOREIGN KEY (character1) REFERENCES characters(id) ON DELETE CASCADE,
-    FOREIGN KEY (character2) REFERENCES characters(id) ON DELETE CASCADE
+    tree_id_relationship INT,
+    PRIMARY KEY (character1, character2),
+    FOREIGN KEY (character1) references characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (character2) references characters(id) ON DELETE CASCADE
+);
+
+CREATE TABLE trees  (
+    tree_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tree_name TEXT
 );
