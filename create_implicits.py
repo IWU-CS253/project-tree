@@ -9,6 +9,9 @@ class Character:
         self.id = num
         self.children = []  # list of children characters
         self.parents = []  # list of parent characters
+        self.niblings = []  # list of nibling characters
+        self.piblings = []  # list of pibling characters
+        self.cousins = []  # list of cousin characters
         self.sibling_num = 0  # To store a sibling code if any are added. Sibling codes allow all siblings to be
         # indirectly connected; all characters that share the same sibling_num are siblings unless it is 0
 
@@ -127,23 +130,56 @@ def implicit_parents(graph):
         if len(char.parents) > 0 and char.sibling_num != 0:  # If a character has a parent and has siblings
             for subCharacter in graph.charList:
                 subChar = graph.getChar(subCharacter)
-                # If a character is one of the siblings of the above character, give them all of their parents
+                # If a character is one of the siblings of the above character, give them all of their parents, and
+                # the parents the sibling
                 if subChar.sibling_num == char.sibling_num:
                     for parent in char.parents:
                         if parent not in subChar.parents:  # Prevents duplicates in the parents list
                             subChar.parents.append(parent)
+                            parent.children.append(subChar)
 
     return graph
+
+
+def implicit_piblings(graph):
+    for character in graph.charList:
+        char = graph.getChar(character)
+        if len(char.children) > 0 and char.sibling_num != 0:  # If a character has children and siblings:
+            for child in char.children:
+                for sibling in graph.charList:
+                    sib = graph.getChar(sibling)
+                    if sib.sibling_num == char.sibling_num and sib != char:
+                        child.piblings.append(sib)
+                        sib.niblings.append(child)
+    return graph
+
+
+def implicit_cousins(graph):
+    for character in graph.charList:
+        char = graph.getChar(character)
+        if len(char.piblings) != 0:
+            for pibling in char.piblings:
+                for child in pibling.children:
+                    if child.sibling_num != char.sibling_num:
+                        if child not in char.cousins:
+                            char.cousins.append(child)
+                        if char not in child.cousins:
+                            child.cousins.append(char)
+
+    return graph
+
 
 
 def add_implicits(graph):
     graph = implicit_siblings(graph)
     graph = implicit_parents(graph)
+    graph = implicit_piblings(graph)
+    graph = implicit_cousins(graph)
     return graph
 
 
 def testGraph():
-    characters = [{'ID': 1}, {'ID': 2}, {'ID': 3}, {'ID': 4}, {'ID': 5}, {'ID': 6}, {'ID': 7}, {'ID': 8}, {'ID': 9}]
+    characters = [{'ID': 1}, {'ID': 2}, {'ID': 3}, {'ID': 4}, {'ID': 5}, {'ID': 6}, {'ID': 7}, {'ID': 8}, {'ID': 9}, {'ID': 10}]
     # This format mirrors the way sqlite objects are structured, and how we will access the relevant attributes
     relationships = [{'CHARACTER1': 1, 'CHARACTER2': 2, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 1, 'CHARACTER2': 3, 'TYPE': 'Parent - Child'},
@@ -152,7 +188,8 @@ def testGraph():
                      {'CHARACTER1': 6, 'CHARACTER2': 7, 'TYPE': 'Sibling - Sibling'},
                      {'CHARACTER1': 3, 'CHARACTER2': 7, 'TYPE': 'Sibling - Sibling'},
                      {'CHARACTER1': 8, 'CHARACTER2': 9, 'TYPE': 'Parent - Child'},
-                     {'CHARACTER1': 9, 'CHARACTER2': 1, 'TYPE': 'Sibling - Sibling'}, ]
+                     {'CHARACTER1': 9, 'CHARACTER2': 1, 'TYPE': 'Sibling - Sibling'},
+                     {'CHARACTER1': 9, 'CHARACTER2': 10, 'TYPE': 'Parent - Child'}]
 
     base_graph = createGraph(characters, relationships)
     graph = add_implicits(base_graph)
@@ -165,3 +202,12 @@ def testGraph():
         for parent in char.parents:
             if parent:
                 print('character: ' + str(character) + ' Parent: ' + str(parent.id))
+        for nibling in char.niblings:
+            if nibling:
+                print('character: ' + str(character) + ' Nibling: ' + str(nibling.id))
+        for pibling in char.piblings:
+            if pibling:
+                print('character: ' + str(character) + ' Pibling: ' + str(pibling.id))
+        for cousin in char.cousins:
+            if cousin:
+                print('character: ' + str(character) + ' Cousin: ' + str(cousin.id))
