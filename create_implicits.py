@@ -12,13 +12,16 @@ class Character:
         self.niblings = []  # list of nibling characters
         self.piblings = []  # list of pibling characters
         self.cousins = []  # list of cousin characters
+        self.grandparents = {}  # Dictionary of grandparents; keys are character ids, values are levels
+        # e.g. distinguishing great grandparent from great ... grandparent
+        self.grandchildren = {}  # Same functionality as grandparents dictionary
         self.sibling_num = 0  # To store a sibling code if any are added. Sibling codes allow all siblings to be
         # indirectly connected; all characters that share the same sibling_num are siblings unless it is 0
 
-    def addChild(self, child):
+    def add_child(self, child):
         self.children.append(child)
 
-    def addParent(self, parent):
+    def add_parent(self, parent):
         self.parents.append(parent)
 
 
@@ -28,24 +31,24 @@ class Graph:
         self.numCharacter = 0
         self.charKey = {}
 
-    def addCharacter(self, key):  # adds a character to the graph
+    def add_character(self, key):  # adds a character to the graph
         self.numCharacter += 1
         newCharacter = Character(key)
         self.charList[key] = newCharacter
         return newCharacter
 
-    def addParent_Child(self, p, c):
+    def add_Parent_Child(self, p, c):
         self.charList[p].addChild(self.charList[c])
         self.charList[c].addParent(self.charList[c])
 
-    def getChar(self, n):  # checks whether 'n' is in the graph
+    def get_char(self, n):  # checks whether 'n' is in the graph
         if n in self.charList:
             return self.charList[n]
         else:
             return None
 
 
-def createGraph(characters, relationships):
+def create_graph(characters, relationships):
     """Given a set of characters and relationships (sqlite objects including, at minimum, character ids and relationship
     types), creates a graph object and stores the characters as vertices and parent-child relationships as directional
     edges. Siblings are given a number, and all characters that share the same sibling number are siblings."""
@@ -169,17 +172,44 @@ def implicit_cousins(graph):
     return graph
 
 
+def recur_grandparents(graph, base_char, cur_char, level=0):
+    for p in cur_char.parents:  # Looping through all parents' parents
+        if p not in base_char.grandparents:
+            if level == 0:
+                cur_char.grandparents[p.id] = 'Grandparent'
+                p.grandchildren[base_char.id] = 'Grandchild'
+            else:
+                greats = ''
+                for i in range(level):
+                    greats = 'Great ' + greats
+                base_char.grandparents[p.id] = greats + 'Grandparent'
+                p.grandchildren[base_char.id] = greats + 'Grandchild'
+            level += 1
+            recur_grandparents(graph, base_char, p, level)
+    return graph
+
+
+def implicit_grandparents(graph):
+    for character in graph.charList:
+        char = graph.getChar(character)
+        if len(char.parents) != 0:
+            for v in char.parents:
+                graph = recur_grandparents(graph, char, v)
+    return graph
+
 
 def add_implicits(graph):
     graph = implicit_siblings(graph)
     graph = implicit_parents(graph)
     graph = implicit_piblings(graph)
     graph = implicit_cousins(graph)
+    graph = implicit_grandparents(graph)
     return graph
 
 
-def testGraph():
-    characters = [{'ID': 1}, {'ID': 2}, {'ID': 3}, {'ID': 4}, {'ID': 5}, {'ID': 6}, {'ID': 7}, {'ID': 8}, {'ID': 9}, {'ID': 10}]
+def test_graph():
+    characters = [{'ID': 1}, {'ID': 2}, {'ID': 3}, {'ID': 4}, {'ID': 5}, {'ID': 6}, {'ID': 7}, {'ID': 8}, {'ID': 9},
+                  {'ID': 10}, {'ID': 11}, {'ID': 12}]
     # This format mirrors the way sqlite objects are structured, and how we will access the relevant attributes
     relationships = [{'CHARACTER1': 1, 'CHARACTER2': 2, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 1, 'CHARACTER2': 3, 'TYPE': 'Parent - Child'},
@@ -189,7 +219,9 @@ def testGraph():
                      {'CHARACTER1': 3, 'CHARACTER2': 7, 'TYPE': 'Sibling - Sibling'},
                      {'CHARACTER1': 8, 'CHARACTER2': 9, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 9, 'CHARACTER2': 1, 'TYPE': 'Sibling - Sibling'},
-                     {'CHARACTER1': 9, 'CHARACTER2': 10, 'TYPE': 'Parent - Child'}]
+                     {'CHARACTER1': 9, 'CHARACTER2': 10, 'TYPE': 'Parent - Child'},
+                     {'CHARACTER1': 10, 'CHARACTER2': 11, 'TYPE': 'Parent - Child'},
+                     {'CHARACTER1': 11, 'CHARACTER2': 12, 'TYPE': 'Parent - Child'}]
 
     base_graph = createGraph(characters, relationships)
     graph = add_implicits(base_graph)
@@ -198,16 +230,19 @@ def testGraph():
     print(graph.getChar(8).children[0].id)
     for character in graph.charList:
         char = graph.getChar(character)
-        print('character: ' + str(character) + ' sibnum: ' + str(char.sibling_num))
+        print('character: ', str(character), ' sibnum: ', str(char.sibling_num))
         for parent in char.parents:
             if parent:
-                print('character: ' + str(character) + ' Parent: ' + str(parent.id))
+                print('character: ', str(character), ' Parent: ', str(parent.id))
         for nibling in char.niblings:
             if nibling:
-                print('character: ' + str(character) + ' Nibling: ' + str(nibling.id))
+                print('character: ', str(character), ' Nibling: ', str(nibling.id))
         for pibling in char.piblings:
             if pibling:
-                print('character: ' + str(character) + ' Pibling: ' + str(pibling.id))
+                print('character: ', str(character), ' Pibling: ', str(pibling.id))
         for cousin in char.cousins:
             if cousin:
-                print('character: ' + str(character) + ' Cousin: ' + str(cousin.id))
+                print('character: ', str(character), ' Cousin: ', str(cousin.id))
+        for grandparent in char.grandparents:
+            if grandparent:
+                print('character: ', str(character), ' Grandparent: ', str(grandparent), str(char.grandparents[grandparent]))
