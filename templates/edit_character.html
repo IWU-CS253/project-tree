@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+    <form class="col" action="{{ url_for('edit_character') }}" method="post">
+        <input type="hidden" name="id" value="{{ character.id }}">
+        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+        <input type="submit" class="btn btn-secondary btn-sm" aria-labelledby="Edit Character Button" value={{ "Edit" }}>
+    </form>
+</html>
