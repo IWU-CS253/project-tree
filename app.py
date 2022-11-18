@@ -125,12 +125,11 @@ def add_character():
 def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
-    if request.form['type'] == 'Custom':
-        db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
-                   [request.form['character1'], request.form['character2'], request.form['custom_type'], request.form['description'], tree_id])
-    else:
-        db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
-                   [request.form['character1'], request.form['character2'], request.form['type'], request.form['description'], tree_id])
+    var = request.form['type']
+    if var == 'Custom':
+        var == request.form['custom_type']
+    db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
+                [request.form['character1'], request.form['character2'], request.form['type'], request.form['description'], tree_id])
     db.commit()
     flash('added relationship')
     return redirect(url_for('show_tree', tree_id=tree_id))
