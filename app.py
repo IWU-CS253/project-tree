@@ -99,15 +99,7 @@ def add_tree():
     db.commit()
     flash('Added ' + tree_name)
     return redirect(url_for('home_page'))
-'''
-@app.route('/home_trees', methods=['POST'])
-def home_trees():
-    db = get_db()
-    cur = db.execute('select tree_name id from trees')
-    trees = cur.fetchall()
-    flash('page is showing trees')
-    return render_template('homepage.html', trees=trees)
-'''
+
 @app.route('/add-character', methods=['POST'])
 def add_character():
     """Adds a new character"""
@@ -151,7 +143,6 @@ def edit_character():
     tree_id = request.form['tree_id']
     cur = db.execute('select id, name from characters where id = ? and tree_id_character = ?', [request.form['id'], tree_id])
     characters = cur.fetchone()
-    flash('moved to edit page')
     return render_template('edit.html', characters=characters, tree_id=tree_id)
 
 
