@@ -1,92 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="static/stylesheet.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <style>
-        #custom {visibility: hidden;}
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</head>
+{% extends "layout.html" %}
+{% block body %}
 <body>
+    <div class="container">
         <div class="row">
-            <header class="display-3 row border-bottom border-3 border-dark">
-                <div class="col-3">
-                    <a class="btn" role="button" href="http://127.0.0.1:5000/" aria-label="Return Home Button">
-                        <img src="/static/home_icon.png" height=100px width=100px>
-                    </a>
+            <div class="col-3 px-1 py-1">
+                <div class="container px-1 py-1">
+                    <div class="row">
+                        {% include 'add_character.html' %}
+                    </div>
+                    {%  if characters|length > 1 %}
+                        {% include 'add_relationship.html' %}
+                    {% endif %}
                 </div>
-                <div class="col-9">
-                    Family Tree Creator
+                <br>
+                <div class="row justify-content-md-center">
+                    <h2>Characters</h2>
                 </div>
-            </header>
-        </div>
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-primary" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-        <div class="container">
-            <div class="row">
-                <div class="col-3 px-1 py-1">
-                    <div class="container px-1 py-1">
-                        <div class="row">
-                            {% include 'add_character.html' %}
+                <ul class="list-unstyled">
+                {% for character in characters %}
+                    <li class="row gy-20 justify-content-md-center">
+                        <div class="row fs-4">
+                           {{ character.name }}
+                            {% include 'edit_character.html' %}
+                            {% include 'delete_character.html' %}
                         </div>
-                        {%  if characters|length > 1 %}
-                            {% include 'add_relationship.html' %}
-                        {% endif %}
-                    </div>
-                    <br>
-                    <div class="row justify-content-md-center">
-                        <h2>Characters</h2>
-                    </div>
-                    <ul class="list-unstyled">
-                    {% for character in characters %}
-                        <li class="row gy-20 justify-content-md-center">
-                            <div class="row fs-4">
-                               {{ character.name }}
-                                {% include 'edit_character.html' %}
-                                {% include 'delete_character.html' %}
-                            </div>
-                            <div class="row">
-                                <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#relationships{{ character.id }}" aria-expanded="false" aria-controls="showRelationships">
-                                    Show Relationships
-                                </button>
-                                <div class="collapse" id="relationships{{ character.id }}">
-                                    <div class="well">
-                                        {%  for relationship in relationships %}
-                                            {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
-                                                <b>{{ relationship.char1_name }}</b> & <b>{{ relationship.char2_name }}</b>:
+                        <div class="row">
+                            <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#relationships{{ character.id }}" aria-expanded="false" aria-controls="showRelationships">
+                                Show Relationships
+                            </button>
+                            <div class="collapse" id="relationships{{ character.id }}">
+                                <div class="well">
+                                    {%  for relationship in relationships %}
+                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
+                                            <b>{{ relationship.char1_name }}</b> & <b>{{ relationship.char2_name }}</b>:
+                                            <br>
+                                            <i>{{ relationship.type }}</i>
+                                            {% if relationship.description %}
+                                                {{ relationship.description }}
                                                 <br>
-                                                <i>{{ relationship.type }}</i>
-                                                {% if relationship.description %}
-                                                    {{ relationship.description }}
-                                                    <br>
-                                                {% endif %}
-                                                <br>
-                                                {% include 'delete_relationship.html' %}
                                             {% endif %}
-                                        {% else %}
-                                            <i>No relationships present</i>
-                                        {% endfor %}
-                                    </div>
+                                            <br>
+                                            {% include 'delete_relationship.html' %}
+                                        {% endif %}
+                                    {% else %}
+                                        <i>No relationships present</i>
+                                    {% endfor %}
                                 </div>
                             </div>
-                        </li>
-                    {% else %}
-                        <li><em>No characters added.</em></li>
-                    {% endfor %}
-                    </ul>
-                </div>
-                <div class="col-9 border-start border-dark border-3 bg-light">
-                    <h2>No display yet, so enjoy this cat</h2>
-                    <img src="/static/cat.png">
-                </div>
+                        </div>
+                    </li>
+                {% else %}
+                    <li><em>No characters added.</em></li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="col-9 border-start border-dark border-3 bg-light">
+                <h2>No display yet, so enjoy this cat</h2>
+                <img src="/static/cat.png">
             </div>
         </div>
+    </div>
 </body>
+{% endblock %}
 </html>
