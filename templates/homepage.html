@@ -1,60 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Family Tree Creator</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link href="static/stylesheet.css" rel="stylesheet">
-</head>
+{% extends "layout.html" %}
+{% block body %}
 <body>
-    <div class="container-fluid min-vh-100 d-flex flex-column">
-        <header class="display-3 row border-bottom border-3 border-dark">
-            <div class="col-3">
-                <a class="btn" role="button" href="http://127.0.0.1:5000/" aria-label="Return Home Button">
-                    <img src="/static/home_icon.png" height=100px width=100px>
-                </a>
-            </div>
-            <div class="col-9">
-                Family Tree Creator
-            </div>
-        </header>
-        <div class="row flex-grow-1">
-            <aside class="col-2">
-                <div class="flex-grow-1">
-                    <ul class="py-3 list-unstyled">
-                        <li class="py-1">
-                            <a href="">Login</a>
-                        </li>
-                        <li class="py-1">
-                            <a href="">Create Account</a>
-                        </li>
-                        <li class="py-1">
-                            <b>Local Trees</b>
-                                <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
-                                    <label for="inputName" class="form-label">Add a Tree</label>
-                                    <input type="text" id="inputName" size="30" name="tree_name">
-                                </form>
-                                {% for tree in trees %}
-                                    <form action="{{ url_for('show_tree') }}" method="get">
+    <div class="row flex-grow-1">
+        <aside class="col-2">
+            <div class="flex-grow-1">
+                <ul class="py-3 list-unstyled">
+                    <li class="py-1">
+                        <a href="">Login</a>
+                    </li>
+                    <li class="py-1">
+                        <a href="">Create Account</a>
+                    </li>
+                    <li class="py-1">
+                        <b>Local Trees</b>
+                            <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
+                                <label for="inputName" class="form-label">Add a Tree</label>
+                                <input type="text" id="inputName" size="30" name="tree_name">
+                            </form>
+                            {% for tree in trees %}
+                                <form action="{{ url_for('show_tree') }}" method="get">
+                                    <br>
+                                        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+                                        <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value={{ tree.tree_name }}>
                                         <br>
-                                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                            <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value={{ tree.tree_name }}>
-                                            <br>
-                                        </dt>
-                                    </form>
-                                {%  endfor  %}
-                        </li>
-                    </ul>
-                </div>
-            </aside>
-            <section class="col-10 px-3 py-3 bg-light border-start border-dark border-3">
-                <b>The Family Tree Creator</b> is a tool designed to make it easy for writers or people passionate about
-                family history to make aesthetically pleasing and robust visualizations for their families or the families
-                of their characters. <br><br> <b>Login</b> or <b>Create an Account</b> to save your trees, or use the
-                textbox on the side to make a new tree to get started on experimenting!
-            </section>
-        </div>
+                                    </dt>
+                                </form>
+                            {%  endfor  %}
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        <section class="col-10 px-3 py-3 bg-light border-start border-dark border-3">
+            <b>The Family Tree Creator</b> is a tool designed to make it easy for writers or people passionate about
+            family history to make aesthetically pleasing and robust visualizations for their families or the families
+            of their characters. <br><br> <b>Login</b> or <b>Create an Account</b> to save your trees, or use the
+            textbox on the side to make a new tree to get started on experimenting!
+        </section>
     </div>
+</div>
 </body>
+{% endblock %}
 </html>
