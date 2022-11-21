@@ -33,10 +33,10 @@
                             <div class="collapse" id="relationships{{ character.id }}">
                                 <div class="well">
                                     {%  for relationship in relationships %}
-                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
-                                            <b>{{ relationship.char1_name }}</b> & <b>{{ relationship.char2_name }}</b>:
+                                        {%  if relationship['CHARACTER1'] == character.id or relationship['CHARACTER2'] == character.id %}
+                                            <b>{{ relationship['CHAR1_NAME'] }}</b> & <b>{{ relationship['CHAR2_NAME'] }}</b>:
                                             <br>
-                                            <i>{{ relationship.type }}</i>
+                                            <i>{{ relationship['TYPE'] }}</i>
                                             {% if relationship.description %}
                                                 {{ relationship.description }}
                                                 <br>
@@ -67,7 +67,7 @@
 
                               var edges = new vis.DataSet([
                                  {% for relationship in relationships %}
-                                  {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}},
+                                  {from: {{ relationship['CHARACTER1'] }}, to: {{ relationship['CHARACTER2'] }}},
                                  {% endfor %}
                            ]);
 

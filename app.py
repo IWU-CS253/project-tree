@@ -80,6 +80,9 @@ def show_tree():
                      'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
                      'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [request.args['tree_id']])
     relationships = cur.fetchall()
+
+    relationships = create_implicits.merge_implicits(characters, relationships)[0]
+
     return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships)
 
 @app.route('/', methods=['GET'])
@@ -170,4 +173,4 @@ def delete_relationship():
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
 def implicit_test_graph():
-    create_implicits.testGraph()
+    create_implicits.test_graph()
