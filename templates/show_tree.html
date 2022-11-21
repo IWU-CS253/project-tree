@@ -43,8 +43,8 @@
                             <div class="collapse" id="relationships{{ character.id }}">
                                 <div class="well">
                                     {%  for relationship in relationships %}
-                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
-                                            <b>{{ relationship.char1_name }}</b> <i>{{ relationship.type }}</i> <b>{{ relationship.char2_name }}</b>
+                                        {%  if relationship['CHARACTER1'] == character.id or relationship['CHARACTER2'] == character.id %}
+                                            <b>{{ relationship['CHAR1_NAME'] }}</b> <i>{{ relationship['TYPE'] }}</i> <b>{{ relationship['CHAR2_NAME'] }}</b>
                                             {% if relationship.description %}
                                                 {{ relationship.description }}
                                                 <br>
@@ -57,7 +57,6 @@
                                                 <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
                                             </form>
                                             {% else %}
-                                            <i>No relationships present</i>
                                         {% endif %}
                                     {% else %}
                                         <i>No relationships present</i>
