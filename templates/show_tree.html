@@ -1,40 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <style>
-        #custom {visibility: hidden;}
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</head>
+{% extends "layout.html" %}
+{% block body %}
 <body>
-    {% for message in get_flashed_messages() %}
-        <div class="alert alert-primary" role="alert">
-            {{ message }}
-        </div>
-    {% endfor %}
     <div class="container">
         <div class="row">
             <div class="col-3 px-1 py-1">
-                <h3>Characters</h3>
+                <div class="container px-1 py-1">
+                    <div class="row">
+                        {% include 'add_character.html' %}
+                    </div>
+                    {%  if characters|length > 1 %}
+                        {% include 'add_relationship.html' %}
+                    {% endif %}
+                </div>
+                <br>
+                <div class="row justify-content-md-center">
+                    <h2>Characters</h2>
+                </div>
                 <ul class="list-unstyled">
                 {% for character in characters %}
                     <li class="row gy-20 justify-content-md-center">
-                        <h5>{{ character.name }}</h5>
-                        <div class="row">
-                            <form class="col" action="{{ url_for('edit_character') }}" method="post">
-                                <input type="hidden" name="id" value="{{ character.id }}">
-                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                <input type="submit" class="btn btn-secondary btn-sm" value={{ "Edit" }}>
-                            </form>
-                            <form class="col" action="{{ url_for('delete_character') }}" method="post">
-                                <input type="hidden" name="id" value="{{ character.id }}">
-                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                <input type="submit" class="btn btn-secondary btn-sm" value={{ "Delete" }}>
-                            </form>
+                        <div class="row fs-4">
+                           {{ character.name }}
+                            {% include 'edit_character.html' %}
+                            {% include 'delete_character.html' %}
                         </div>
                         <div class="row">
                             <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#relationships{{ character.id }}" aria-expanded="false" aria-controls="showRelationships">
@@ -44,96 +34,62 @@
                                 <div class="well">
                                     {%  for relationship in relationships %}
                                         {%  if relationship['CHARACTER1'] == character.id or relationship['CHARACTER2'] == character.id %}
-                                            <b>{{ relationship['CHAR1_NAME'] }}</b> <i>{{ relationship['TYPE'] }}</i> <b>{{ relationship['CHAR2_NAME'] }}</b>
+                                            <b>{{ relationship['CHAR1_NAME'] }}</b> & <b>{{ relationship['CHAR2_NAME'] }}</b>:
+                                            <br>
+                                            <i>{{ relationship['TYPE'] }}</i>
                                             {% if relationship.description %}
                                                 {{ relationship.description }}
                                                 <br>
                                             {% endif %}
                                             <br>
-                                            <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
-                                                <input type="hidden" name="character1" value="{{ relationship.character1 }}">
-                                                <input type="hidden" name="character2" value="{{ relationship.character2 }}">
-                                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                                <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship">
-                                            </form>
-                                            {% else %}
+                                            {% include 'delete_relationship.html' %}
                                         {% endif %}
                                     {% else %}
                                         <i>No relationships present</i>
                                     {% endfor %}
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                {% else %}
-                    <li><em>No characters added.</em></li>
-                {% endfor %}
-                </ul>
-            </div>
-            <div class="col-9">
-                <h1 class="display-3">Family Tree Creator</h1>
-                <div class="container px-1 py-1">
-                    <div class="row">
-                        <h2>Add Character</h2>
-                        <form action="{{ url_for('add_character') }}" method="post" class="add-entry">
-                            <label for="inputName" class="form-label">Name</label>
-                            <input type="text" id="inputName" size="30" name="name">
-                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                            <input type="submit" class="btn btn-primary btn-sm" value={{ "Add" }}>
-                        </form>
-                        <form action="{{ url_for('home_page') }}" method="get">
-                            <input type="submit" class="btn btn-primary btn-sm" value={{ "home" }}>
-                        </form>
-                    </div>
-                    {%  if characters|length > 1 %}
-                        <h2>Add Relationship</h2>
-                        <form action="{{ url_for('add_relationship') }}" method="post">
-                            <label for="character1">Character 1</label>
-                            <select class="mb-1 mt-1" id="character1" name="character1">
-                                {% for character1 in characters %}
-                                  <option value="{{ character1.id }}">{{character1.name}}</option>
+                        </li>
+                    {% else %}
+                        <li><em>No characters added.</em></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-9 border-start border-dark border-3 bg-light">
+                    <div id="mynetwork"></div>
+                       <script type="text/javascript">
+                            // create an array with nodes
+                            var nodes = new vis.DataSet([
+                                {% for character in characters %}
+                                  {id: {{ character.id }}, label: "{{ character.name }}"},
                                 {% endfor %}
-                            </select>
-                            <br>
-                            <label for="character2">Character 2</label>
-                            <select class="mb-1 mt-1" id="character2" name="character2">
-                                {% for character2 in characters %}
-                                  <option value="{{ character2.id }}">{{character2.name}}</option>
-                                {% endfor %}
-                            </select>
-                            <br>
-                            <label for="type">Type</label>
-                            <select class="mb-1 mt-1" id="type" name="type">
-                                <option>Parent - Child</option>
-                                <option>Sibling - Sibling</option>
-                                <option>Spouse - Spouse</option>
-                                <option>Partner - Partner</option>
-                                <option>Custom</option>
-                            </select>
-                            <br>
-                            <div class="mb-1 mt-1" id="custom">
-                                <input type="text" id="inputType" size="10" name="custom_type">
-                            </div>
-                            <script type="text/javascript">
-                                document.getElementById("type").addEventListener("change", showCustom);
-                                function showCustom() {
-                                    if (document.getElementById("type").value == "Custom") {
-                                        document.getElementById("custom").style.visibility='visible';
-                                    }
-                                    else {
-                                        document.getElementById("custom").style.visibility='hidden';
-                                    }
-                                }
-                            </script>
-                            <label for="description">Description (Optional)</label>
-                            <textarea class="form-control" id="description" name="description"></textarea>
-                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                            <input class="mb-1 mt-1" type="submit" value="Add Relationship">
-                        </form>
-                    {% endif %}
+                            ]);
+
+                              var edges = new vis.DataSet([
+                                 {% for relationship in relationships %}
+                                  {from: {{ relationship['CHARACTER1'] }}, to: {{ relationship['CHARACTER2'] }}},
+                                 {% endfor %}
+                           ]);
+
+
+                        // create a network
+                        var container = document.getElementById('mynetwork');
+
+                        // provide the data in the vis format
+                        var data = {
+                             nodes: nodes,
+                             edges: edges
+                            };
+                        var options = {};
+
+                        // initialize your network!
+                        var network = new vis.Network(container, data, options);
+
+                       </script>
                 </div>
             </div>
         </div>
     </div>
 </body>
+{% endblock %}
 </html>
