@@ -94,7 +94,7 @@ def implicit_siblings(graph):
     # will not conflict with existing ones.
     sib_incrementor = 1
     for char in graph.charList:
-        if graph.get_char(char).sibling_num > sib_incrementor:
+        if graph.get_char(char).sibling_num >= sib_incrementor:
             sib_incrementor = graph.get_char(char).sibling_num + 1
 
     for char in graph.charList:
@@ -108,7 +108,8 @@ def implicit_siblings(graph):
             if len(sibling_numbers) == 0:  # If none had a sibling number, generate a new one and assign it to all
                 for child in graph.get_char(char).children:
                     child.sibling_num = sib_incrementor
-                    sib_incrementor += 1
+
+                sib_incrementor += 1
 
             # If all have sibling numbers, and they are all the same, move on to the next character
             if len(sibling_numbers) == len(graph.get_char(char).children) and len(set(sibling_numbers)) == 1:
@@ -214,11 +215,13 @@ def merge_implicits(characters, relationships):
 
     graph = add_implicits(create_graph(characters, relationships))
 
+    for char in graph.charList:
+        char = graph.get_char(char)
+
     rel_list = []  # Simplifies avoiding duplicates, since relationship objects are fairly complex and difficult to
     # check exactly without tracking descriptions across the whole file
     for relationship in relationships:
         rel_list.append((relationship['CHARACTER1'], relationship['CHARACTER2'], relationship['TYPE']))
-        print((relationship['CHARACTER1'], relationship['CHARACTER2'], relationship['TYPE']))
 
     for character in graph.charList:
         char = graph.get_char(character)
@@ -230,9 +233,7 @@ def merge_implicits(characters, relationships):
                     full_rel = {'CHARACTER1': char.id, 'CHARACTER2': sib.id, 'TYPE': 'Sibling - Sibling',
                                 'CHAR1_NAME': char.name, 'CHAR2_NAME': sib.name}
                     rel = (char.id, sib.id, 'Sibling - Sibling')
-                    print(rel)
                     alt_rel = (sib.id, char.id, 'Sibling - Sibling')
-                    print(alt_rel)
                     if rel not in rel_list and alt_rel not in rel_list:
                         relationships.append(full_rel)
                         rel_list.append(rel)

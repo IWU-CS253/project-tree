@@ -82,9 +82,8 @@ def show_tree():
     relationships = cur.fetchall()
 
     relationships = create_implicits.merge_implicits(characters, relationships)[0]
-    george = 'George'
 
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, george=george)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships)
 
 @app.route('/', methods=['GET'])
 def home_page():
