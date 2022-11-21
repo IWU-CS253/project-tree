@@ -57,37 +57,36 @@
                 </div>
                 <div class="col-9 border-start border-dark border-3 bg-light">
                     <div id="mynetwork"></div>
-                       <script type="text/javascript">
+                        <script type="text/javascript">
                             // create an array with nodes
                             var nodes = new vis.DataSet([
                                 {% for character in characters %}
-                                  {id: {{ character.id }}, label: "{{ character.name }}"},
+                                    {id: {{ character.id }}, label: "{{ character.name }}"},
                                 {% endfor %}
                             ]);
 
-                              var edges = new vis.DataSet([
-                                 {% for relationship in relationships %}
-                                  {from: {{ relationship['CHARACTER1'] }}, to: {{ relationship['CHARACTER2'] }}},
-                                 {% endfor %}
+                            var edges = new vis.DataSet([
+                                {% for relationship in relationships %}
+                                    {from: {{ relationship['CHARACTER1'] }}, to: {{ relationship['CHARACTER2'] }}},
+                                {% endfor %}
                            ]);
 
 
-                        // create a network
-                        var container = document.getElementById('mynetwork');
+                            // create a network
+                            var container = document.getElementById('mynetwork');
 
-                        // provide the data in the vis format
-                        var data = {
-                             nodes: nodes,
-                             edges: edges
+                            // provide the data in the vis format
+                            var data = {
+                                nodes: nodes,
+                                edges: edges
                             };
-                        var options = {};
+                            var options = {};
 
-                        // initialize your network!
-                        var network = new vis.Network(container, data, options);
-
-                       </script>
+                            // initialize your network!
+                            var network = new vis.Network(container, data, options);
+                        </script>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </body>
