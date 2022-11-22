@@ -18,156 +18,126 @@ class FamilytreeTestCase(unittest.TestCase):
         os.unlink(familytree.app.config['DATABASE'])
 
     # A simple placeholder test; can be removed once first tests are added
+    def test_add_tree(self):
+        rv = self.app.post('/add-tree', data=dict(
+            tree_name="Tree1"
+        ), follow_redirects=True)
+        rv = self.app.get('/tree?tree_id=1&tree=Tree1')
+        assert b'No display yet, so enjoy this cat'
 
     def test_add_character(self):
+        self.test_add_tree()
         rv = self.app.post('/add-character', data=dict(
-            name='Alice'
+            name='Alice',
+            tree_id=1
         ), follow_redirects=True)
+        rv = self.app.post('/add-character', data=dict(
+            name='George',
+            tree_id=1
+        ), follow_redirects=True)
+        rv = self.app.post('/add-character', data=dict(
+            name='Mortimer',
+            tree_id=1
+        ), follow_redirects=True)
+
         assert b'No characters added.' not in rv.data
-
-        # Below ensures that there are at least 2 unique appearances of 'Alice', since it should be present both in the
+        # Below ensures that there are at least 2 unique appearances of 'Mortimer', since it should be present both in the
         # character list and in the flash message (at minimum; other features may also have it present)
-        assert rv.data.count(b'Alice') >= 2
+        assert rv.data.count(b'Mortimer') >= 2
 
-        assert b'Added Alice' in rv.data
+        assert b'Added Mortimer' in rv.data
 
     def test_edit_character(self):
-        rv = self.app.post('/add-character', data=dict(
-            name='Charles'
-        ), follow_redirects=True)
-
-        assert rv.data.count(b'Charles') >= 2
-
-        assert b'Added Charles' in rv.data
-
-        rv = self.app.post('/add-character', data=dict(
-            name='James'
-        ), follow_redirects=True)
-        assert b'Added James' in rv.data
-
+        self.test_add_tree()
+        self.test_add_character()
         edit_rv = self.app.post('/edit', data=dict(
-            id=1
+            id=1,
+            tree_id=1
         ), follow_redirects=True)
 
-        assert b'Charles' in edit_rv.data
+        assert b'Alice' in edit_rv.data
 
-        assert b'James' not in edit_rv.data
+        assert b'George' not in edit_rv.data
 
     def test_save_edit_character(self):
-        rv = self.app.post('/add-character', data=dict(
-            name='Charles'
-        ), follow_redirects=True)
-
-        assert b'Added Charles' in rv.data
-
-        rv = self.app.post('/add-character', data=dict(
-            name='James'
-        ), follow_redirects=True)
-        assert b'Added James' in rv.data
-
+        self.test_add_tree()
+        self.test_add_character()
         edited_rv = self.app.post('/save_edit', data=dict(
             id=2,
-            name='Hannibal'
+            name='Hannibal',
+            tree_id=1
         ), follow_redirects=True)
-        assert b'Charles' in edited_rv.data
+        assert b'Alice' in edited_rv.data
 
-        assert b'James' not in edited_rv.data
+        assert b'George' not in edited_rv.data
 
         assert b'Hannibal' in edited_rv.data
 
     def test_delete(self):
-        rv = self.app.post('/add-character', data=dict(
-            name='Charles'
-        ), follow_redirects=True)
-
-        assert b'Added Charles' in rv.data
-
+        self.test_add_tree()
+        self.test_add_character()
         deleted_rv = self.app.post('/delete', data=dict(
-            id=1
+            id=1,
+            tree_id=1
         ), follow_redirects=True)
 
         assert b'character was deleted' in deleted_rv.data
 
-        assert b'Charles' not in deleted_rv.data
+        assert b'Alice' not in deleted_rv.data
 
     def test_delete_last(self):
-        rv = self.app.post('/add-character', data=dict(
-            name='Charles'
-        ), follow_redirects=True)
-
-        assert b'Added Charles' in rv.data
-
-        rv = self.app.post('/add-character', data=dict(
-            name='Leo'
-        ), follow_redirects=True)
-
-        assert b'Added Leo' in rv.data
-
+        self.test_add_tree()
+        self.test_add_character()
         deleted_rv = self.app.post('/delete', data=dict(
-            id=2
+            id=3,
+            tree_id=1
         ), follow_redirects=True)
 
         assert b'character was deleted' in deleted_rv.data
 
-        assert b'Leo' not in deleted_rv.data
+        assert b'Mortimer' not in deleted_rv.data
 
-        assert b'Charles' in deleted_rv.data
+        assert b'George' in deleted_rv.data
 
-    def test_delete_relationship(self):
-        rv = self.app.post('/add-character', data=dict(
-            name='Char1'
+    def test_add_relationship(self):
+        self.test_add_tree()
+        self.test_add_character()
+        rv = self.app.post('/relationship', data=dict(
+            character1=1,
+            character2=2,
+            type='Parent - Child',
+            tree_id=1
         ), follow_redirects=True)
 
-        rv = self.app.post('/add-character', data=dict(
-            name='Char2'
-        ), follow_redirects=True)
-
-        rv = self.app.post('/add_relationship', data=dict(
-            character1=1, character2=2, type='Spouse - Spouse', description=''
-        ), follow_redirects=True)
-
-        assert b'Char1' in rv.data
-
-        deleted_rv = self.app.post('/delete_relationship', data=dict(
-            character1='Char1', character2='Char2'), follow_redirects=True)
-
-        assert b'relationship was deleted' in deleted_rv.data
+        assert b'Alice & George:'
 
     def test_relationship_adder_appearance(self):
         # Tests to ensure that the add relationship fields appear when (and only one) 2 or more characters exist
-        rv = self.app.get('/')
+        self.test_add_tree()
+        rv = self.app.post('/add-character', data=dict(
+            name='Alice',
+            tree_id=1
+        ), follow_redirects=True)
+
         assert b'Add Relationship' not in rv.data
 
         rv = self.app.post('/add-character', data=dict(
-            name='George'
+            name='George',
+            tree_id=1
         ), follow_redirects=True)
-        assert b'Add Relationship' not in rv.data
 
-        rv = self.app.post('/add-character', data=dict(
-            name='Martha'
-        ), follow_redirects=True)
         assert b'Add Relationship' in rv.data
 
-    def test_add_relationship(self):
-        self.app.post('/add-character', data=dict(name='George'), follow_redirects=True)
-        self.app.post('/add-character', data=dict(name='Martha'), follow_redirects=True)
-        rv = self.app.post('/add_relationship', data=dict(
-            character1=1, character2=2, type='Spouse - Spouse', description=''
-        ), follow_redirects=True)
-        assert b'<b>George</b> & <b>Martha</b>:' in rv.data
-        assert b'<i>Spouse - Spouse</i>' in rv.data  # Newlines require a bucket of spaces to imitate for some reason
-        # So for now we're separating the assertions
+    def test_delete_relationship(self):
+        self.test_add_tree()
+        self.test_add_character()
+        self.test_add_relationship()
+        deleted_rv = self.app.post('/delete_relationship', data=dict(
+            character1=1, character2=2, tree_id=1), follow_redirects=True)
 
-        rv = self.app.post('/add_relationship', data=dict(
-            character1=1, character2=2,  custom_type='Friend - Friend', type='Custom', description='Friends since preschool'
-        ), follow_redirects=True)
-        assert b'<b>George</b> & <b>Martha</b>:' in rv.data
-        assert b'<i>Friend - Friend</i>'
-        assert b'Friends since preschool' in rv.data
-
-    def test_empty_db(self):
-        rv = self.app.get('/tree')
-        assert b'No characters added.' in rv.data
+        assert b'Alice & George:' not in deleted_rv.data
+        
+        assert b'relationship was deleted' in deleted_rv.data
 
 if __name__ == '__main__':
     unittest.main()
