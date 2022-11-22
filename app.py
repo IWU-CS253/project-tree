@@ -81,9 +81,9 @@ def show_tree():
                      'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [request.args['tree_id']])
     relationships = cur.fetchall()
 
-    relationships = create_implicits.merge_implicits(characters, relationships)[0]
+    implicit_rels = create_implicits.merge_implicits(characters, relationships)
 
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, implicits=implicit_rels)
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -122,7 +122,7 @@ def add_relationship():
     tree_id = request.form['tree_id']
     var = request.form['type']
     if var == 'Custom':
-        var == request.form['custom_type']
+        var = request.form['custom_type']
     db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
                 [request.form['character1'], request.form['character2'], request.form['type'], request.form['description'], tree_id])
     db.commit()
