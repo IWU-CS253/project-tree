@@ -1,6 +1,7 @@
 drop table if exists characters;
 drop table if exists relationships;
 drop table if exists trees;
+drop table if exists colors;
 
 CREATE TABLE characters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,4 +24,10 @@ CREATE TABLE relationships (
 CREATE TABLE trees  (
     tree_id INTEGER PRIMARY KEY AUTOINCREMENT,
     tree_name TEXT
+);
+
+CREATE TABLE colors  (
+    tree_id_colors INT,
+    color TEXT,
+    type TEXT
 );
