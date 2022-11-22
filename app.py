@@ -80,7 +80,11 @@ def show_tree():
                      'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
                      'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [request.args['tree_id']])
     relationships = cur.fetchall()
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships)
+
+    cur = db.execute('SELECT color, type, tree_id_colors FROM colors WHERE tree_id_colors = ?', [request.args['tree_id']])
+    colors = cur.fetchall()
+
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors)
 
 @app.route('/', methods=['GET'])
 def home_page():
