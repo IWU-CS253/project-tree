@@ -81,7 +81,7 @@ def show_tree():
                      'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [request.args['tree_id']])
     relationships = cur.fetchall()
 
-    cur = db.execute('SELECT color, type, tree_id_colors FROM colors WHERE tree_id_colors = ?', [request.args['tree_id']])
+    cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [request.args['tree_id']])
     colors = cur.fetchall()
 
     return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors)

@@ -27,7 +27,7 @@ CREATE TABLE trees  (
 );
 
 CREATE TABLE colors  (
-    tree_id_colors INT,
+    tree_id_color INT,
     color TEXT,
     type TEXT
 );
