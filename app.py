@@ -101,6 +101,11 @@ def add_tree():
     db.execute('INSERT INTO trees (tree_name) VALUES (?)',
                [tree_name])
     db.commit()
+
+    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+               [tree_id, "blue", "Parent - Child"])
+    db.commit()
+
     flash('Added ' + tree_name)
     return redirect(url_for('home_page'))
 
@@ -170,6 +175,23 @@ def delete_relationship():
     flash('relationship was deleted')
     return redirect(url_for('show_tree', tree_id=tree_id))
 
+@app.route('/show_legend', methods=['POST'])
+def show_legend():
+    db = get_db()
+    tree_id = request.form['tree_id']
+    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+               [tree_id, "blue", "Parent - Child"])
+    db.commit()
+    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+               [tree_id, "green", "Sibling - Sibling"])
+    db.commit()
+    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+               [tree_id, "red", "Spouse - Spouse"])
+    db.commit()
+    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+               [tree_id, "orange", "Partner - Partner"])
+    db.commit()
+    return redirect(url_for('show_tree', tree_id=tree_id))
 
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')

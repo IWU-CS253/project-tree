@@ -11,7 +11,13 @@
                         {% include 'add_character.html' %}
                     </div>
                     {%  if characters|length > 1 %}
+                        <h2>Relationship Color Legend</h2>
+                        {%  for color in colors %}
+                            {{ color.type }} relationship is {{ color.color }}
+                            <br>
+                        {% endfor %}
                         {% include 'add_relationship.html' %}
+                        {% include 'show_legend.html' %}
                     {% endif %}
                 </div>
                 <br>
