@@ -39,6 +39,7 @@
                             </button>
                             <div class="collapse" id="relationships{{ character.id }}">
                                 <div class="well">
+                                    <h5>Defined Relationships</h5>
                                     {%  for relationship in relationships %}
                                         {%  if relationship['CHARACTER1'] == character.id or relationship['CHARACTER2'] == character.id %}
                                             <b>{{ relationship['CHAR1_NAME'] }}</b> & <b>{{ relationship['CHAR2_NAME'] }}</b>:
@@ -51,8 +52,16 @@
                                             <br>
                                             {% include 'delete_relationship.html' %}
                                         {% endif %}
-                                    {% else %}
-                                        <i>No relationships present</i>
+                                    {% endfor %}
+                                    <br>
+                                    <h5>Implied Relationships</h5>
+                                    {%  for implicit in implicits %}
+                                        {%  if implicit['CHARACTER1'] == character.id or implicit['CHARACTER2'] == character.id %}
+                                            <b>{{ implicit['CHAR1_NAME'] }}</b> & <b>{{ implicit['CHAR2_NAME'] }}</b>
+                                            <br>
+                                            <i>{{ implicit['TYPE'] }}</i>
+                                            <br>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
