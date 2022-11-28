@@ -18,6 +18,11 @@
                         {% include 'add_character.html' %}
                     </div>
                     {%  if characters|length > 1 %}
+                        <h2>Relationship Color Legend</h2>
+                        {%  for color in colors %}
+                            {{ color.type }} relationship is {{ color.color }}
+                            <br>
+                        {% endfor %}
                         {% include 'add_relationship.html' %}
                     {% endif %}
                 </div>
@@ -73,7 +78,8 @@
                 </div>
                 <div class="col-9 border-start border-dark border-3 bg-light">
                     <div id="mynetwork"></div>
-                        <script type="text/javascript">
+                       <script type="text/javascript">
+
                             // create an array with nodes
                             var nodes = new vis.DataSet([
                                 {% for character in characters %}
@@ -82,6 +88,20 @@
                             ]);
 
                             var edges = new vis.DataSet([
+
+                                {% for relationship in relationships %}
+                                    {% if  relationship.type == "Parent - Child" %}
+                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'blue'}},
+                                    {% elif  relationship.type == "Sibling - Sibling" %}
+                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'green'}},
+                                    {% elif  relationship.type == "Spouse - Spouse" %}
+                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'red'}},
+                                    {% elif  relationship.type == "Partner - Partner" %}
+                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'orange'}},
+                                    {% endif %}
+
+                                {% endfor %}
+
                                 {% for relationship in relationships %}
                                     {from: {{ relationship['CHARACTER1'] }}, to: {{ relationship['CHARACTER2'] }}},
                                 {% endfor %}
@@ -90,15 +110,21 @@
                             // create a network
                             var container = document.getElementById('mynetwork');
 
+                           // create a network
+                            var container = document.getElementById('mynetwork');
+
+                           // provide the data in the vis format
                             // provide the data in the vis format
                             var data = {
                                 nodes: nodes,
                                 edges: edges
                             };
                             var options = {};
-                                 
-                            // initialize your network!
+
+                           // initialize your network!
                             var network = new vis.Network(container, data, options);
+
+
                         </script>
                     </div>
                 </div>
