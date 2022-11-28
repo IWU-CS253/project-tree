@@ -85,6 +85,7 @@ def show_tree():
     cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
     colors = cur.fetchall()
 
+    #checks if the colors table is empty for that tree if it is add default values
     if len(colors) == 0:
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
                    [tree_id, "blue", "Parent - Child"])
@@ -118,11 +119,6 @@ def add_tree():
     db.execute('INSERT INTO trees (tree_name) VALUES (?)',
                [tree_name])
     db.commit()
-    '''
-    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-               [tree_id, "blue", "Parent - Child"])
-    db.commit()
-    '''
     flash('Added ' + tree_name)
     return redirect(url_for('home_page'))
 
@@ -190,24 +186,6 @@ def delete_relationship():
                [request.form['character1'], request.form['character2']])
     db.commit()
     flash('relationship was deleted')
-    return redirect(url_for('show_tree', tree_id=tree_id))
-
-@app.route('/show_legend', methods=['POST'])
-def show_legend():
-    db = get_db()
-    tree_id = request.form['tree_id']
-    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-               [tree_id, "blue", "Parent - Child"])
-    db.commit()
-    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-               [tree_id, "green", "Sibling - Sibling"])
-    db.commit()
-    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-               [tree_id, "red", "Spouse - Spouse"])
-    db.commit()
-    db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-               [tree_id, "orange", "Partner - Partner"])
-    db.commit()
     return redirect(url_for('show_tree', tree_id=tree_id))
 
 # For run configurations to test the create_implicits graphs
