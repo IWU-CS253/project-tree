@@ -76,6 +76,7 @@
                                 {% for relationship in relationships %}
                                     {from: {{ relationship['CHARACTER1'] }}, to: {{ relationship['CHARACTER2'] }}},
                                 {% endfor %}
+
                            ]);
 
                             // create a network
@@ -86,7 +87,14 @@
                                 nodes: nodes,
                                 edges: edges
                             };
-                            var options = {};
+                            var options = {
+                                layout: {
+                                    hierarchical: {
+                                        direction: "UD",
+                                        sortMethod: "directed",
+                                    },
+                                },
+                            };
                                  
                             // initialize your network!
                             var network = new vis.Network(container, data, options);
