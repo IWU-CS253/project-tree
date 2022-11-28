@@ -14,11 +14,15 @@ Completed Work
 - The Relationship Legend has been added (Jeff). 
 - Implicit and Defined Relationships are now separate, implicits are shown in the relationship list but not in the display
 which fixes the sibling loop and other related problems (Josh). 
-- The tree display is now hierarchical (Zach). 
+- The tree display is now hierarchical for smaller/simpler family trees, i.e. a simple family tree of grandfather, father, and son will 
+automatically be structured right hierarchically (Zach). 
 
 Planned and Unfinished 
 ----------------------
-Other tree configuration issues, like zooming have not been dealt with yet. 
+Other tree configuration issues, like zooming have not been dealt with yet. There are still some bugs with the heirarchical system, 
+once more complex trees are made with extra siblings, partners, spouses, that are supposed to be kept within the same generation. Zach will
+try to get this fixed before user testing on Tuesday, but he doubts that it will be finished before the iteration deadline at 5:00pm, as there was much
+more complexity in implementing this feature than originally thought. 
 
 Difficulties
 ---------------------
