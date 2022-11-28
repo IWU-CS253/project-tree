@@ -139,5 +139,29 @@ class FamilytreeTestCase(unittest.TestCase):
         
         assert b'relationship was deleted' in deleted_rv.data
 
+    def test_default_legend(self):
+        self.test_add_tree()
+
+        rv = self.app.post('/add-character', data=dict(
+            name='George',
+            tree_id=1
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add-character', data=dict(
+            name='Alice',
+            tree_id=1
+        ), follow_redirects=True)
+
+        assert b'Relationship Color Legend' in rv.data
+
+        assert b'Partner - Partner relationship is orange' in rv.data
+
+        assert b'Spouse - Spouse relationship is red' in rv.data
+
+        assert b'Sibling - Sibling relationship is green' in rv.data
+
+        assert b'Parent - Child relationship is blue' in rv.data
+
+
 if __name__ == '__main__':
     unittest.main()
