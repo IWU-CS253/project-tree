@@ -77,6 +77,8 @@
                                         {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'red'}},
                                     {% elif  relationship.type == "Partner - Partner" %}
                                         {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'orange'}},
+                                    {% elif  relationship.type == "Custom" %}
+                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'black'}},
                                     {% endif %}
 
                                 {% endfor %}
