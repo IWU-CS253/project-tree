@@ -102,7 +102,8 @@ def show_tree():
         cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
         colors = cur.fetchall()
 
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors)
+    implicit_rels = create_implicits.merge_implicits(characters, relationships)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels)
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -141,7 +142,7 @@ def add_relationship():
     tree_id = request.form['tree_id']
     var = request.form['type']
     if var == 'Custom':
-        var == request.form['custom_type']
+        var = request.form['custom_type']
     db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
                 [request.form['character1'], request.form['character2'], request.form['type'], request.form['description'], tree_id])
     db.commit()
@@ -191,4 +192,4 @@ def delete_relationship():
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
 def implicit_test_graph():
-    create_implicits.testGraph()
+    create_implicits.test_graph()

@@ -13,13 +13,14 @@ Completed Work
 ---------------------
 - Modified show_tree and homepage to have a layout.html and every function/button to have its own separate html page (Jeff)
 - Removed some useless code from app.py (Jeff)
-- Implicit relationships created for parents / children, siblings, niblings / piblings, cousins, and grandparents (Josh)
+- Implicit relationships created for parents / children, siblings, niblings / piblings, cousins, and grandparents (Josh) (we still need to add unit tests for this)
 - Fixed all of unit tests (made them work with the new add tree) (Zach)
 - Display for characters and relationships functional now (Grace)
 
 Difficulties
 ---------------------
 - Combining Javascript and Jinja for Vis to display the graph was difficult
+- Jinja variable system was difficult to use
 
 Adjustments and Changes
 ---------------------
@@ -37,7 +38,7 @@ Next Iteration Plan
 Iteration Week 5 User Stories
 - Tree Display: Relationship Types: Grace
 - Tree Display: Relationship Legend: Jeff
-- Fix sibling tree display/other configurations (maybe zooming): Josh
+- Fix tree display to only show primary relationships (parents, children, siblings) and avoid sibling loops: Josh
 - Make tree display hierarchical: Zach
 
 Future Iteration Plans
@@ -46,6 +47,7 @@ Iteration Week 6 User Stories:
 - Account Creation
 - Account Security and Recovery
 - Relationship Type Filtering
+- Unit Tests for implicit relationships
 
 Iteration Week 7 User Stories:
 - Tree Display: Responsiveness

@@ -3,6 +3,13 @@
 {% extends "layout.html" %}
 {% block body %}
 <body>
+    <!--
+
+    Some Code used in initalizing the display was adapted from the Vis Library. 
+    See its license in the file LICENSE-Vis-MIT.md for more details.
+
+    -->
+    
     <div class="container">
         <div class="row">
             <div class="col-3 px-1 py-1">
@@ -37,11 +44,12 @@
                             </button>
                             <div class="collapse" id="relationships{{ character.id }}">
                                 <div class="well">
+                                    <h5>Defined Relationships</h5>
                                     {%  for relationship in relationships %}
-                                        {%  if relationship.character1 == character.id or relationship.character2 == character.id %}
-                                            <b>{{ relationship.char1_name }}</b> & <b>{{ relationship.char2_name }}</b>:
+                                        {%  if relationship['CHARACTER1'] == character.id or relationship['CHARACTER2'] == character.id %}
+                                            <b>{{ relationship['CHAR1_NAME'] }}</b> & <b>{{ relationship['CHAR2_NAME'] }}</b>:
                                             <br>
-                                            <i>{{ relationship.type }}</i>
+                                            <i>{{ relationship['TYPE'] }}</i>
                                             {% if relationship.description %}
                                                 {{ relationship.description }}
                                                 <br>
@@ -49,8 +57,16 @@
                                             <br>
                                             {% include 'delete_relationship.html' %}
                                         {% endif %}
-                                    {% else %}
-                                        <i>No relationships present</i>
+                                    {% endfor %}
+                                    <br>
+                                    <h5>Implied Relationships</h5>
+                                    {%  for implicit in implicits %}
+                                        {%  if implicit['CHARACTER1'] == character.id or implicit['CHARACTER2'] == character.id %}
+                                            <b>{{ implicit['CHAR1_NAME'] }}</b> & <b>{{ implicit['CHAR2_NAME'] }}</b>
+                                            <br>
+                                            <i>{{ implicit['TYPE'] }}</i>
+                                            <br>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -86,13 +102,19 @@
 
                                 {% endfor %}
 
+                                {% for relationship in relationships %}
+                                    {from: {{ relationship['CHARACTER1'] }}, to: {{ relationship['CHARACTER2'] }}},
+                                {% endfor %}
                            ]);
 
+                            // create a network
+                            var container = document.getElementById('mynetwork');
 
                            // create a network
                             var container = document.getElementById('mynetwork');
 
                            // provide the data in the vis format
+                            // provide the data in the vis format
                             var data = {
                                 nodes: nodes,
                                 edges: edges
@@ -102,9 +124,10 @@
                            // initialize your network!
                             var network = new vis.Network(container, data, options);
 
-                       </script>
+
+                        </script>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </body>
