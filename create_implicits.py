@@ -189,6 +189,21 @@ def recur_grandparents(graph, base_char, cur_char, level=0):
     return graph
 
 
+def create_hierarchy(characters, relationships):
+    graph = add_implicits(create_graph(characters, relationships))
+    new_dictionary = {}
+    for character in graph.charList:
+        char = graph.get_char(character)
+        if len(char.parents) != 0:
+            new_level = 1 + len(char.grandparents)
+            new_dictionary.update({char.id: new_level})
+
+        else:
+            new_dictionary.update({char.id: 0})
+
+    return new_dictionary
+
+
 def implicit_grandparents(graph):
     for character in graph.charList:
         char = graph.get_char(character)
