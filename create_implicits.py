@@ -195,9 +195,7 @@ def create_hierarchy(characters, relationships):
     for character in graph.charList:
         char = graph.get_char(character)
         if len(char.parents) != 0:
-            new_level = 1 + len(char.grandparents)
-            new_dictionary.update({char.id: new_level})
-
+            new_dictionary.update({char.id: (1 + len(char.grandparents))})
         else:
             new_dictionary.update({char.id: 0})
 

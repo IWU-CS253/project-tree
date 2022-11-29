@@ -68,7 +68,7 @@
                             // create an array with nodes
                             var nodes = new vis.DataSet([
                                 {% for character in characters %}
-                                    {id: {{ character.id }}, label: "{{ character.name }}"},
+                                    {id: {{ character.id }}, label: "{{ character.name }}", level:  {{hierarchy[character.id]}}},
                                 {% endfor %}
 
 
@@ -80,12 +80,6 @@
                                 {% endfor %}
 
                            ]);
-
-                            {% for key, value in hierarchy.items()%}
-                                console.debug({{key}})
-                                console.debug({{value}})
-                            nodes[{{key}}]["level"] = {{value}};
-                                {% endfor %}
 
                             // create a network
                             var container = document.getElementById('mynetwork');

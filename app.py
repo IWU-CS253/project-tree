@@ -84,7 +84,6 @@ def show_tree():
     relationships = create_implicits.merge_implicits(characters, relationships)[0]
 
     hierarchy = create_implicits.create_hierarchy(characters, relationships)
-   # hierarchy = create_implicits.update_hierarchy(characters, relationships, hierarchy)
 
     return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, hierarchy=hierarchy)
 
