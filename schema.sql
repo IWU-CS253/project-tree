@@ -37,10 +37,10 @@ CREATE TABLE colors  (
 CREATE TABLE  ids  (
     tree_id INT,
     username_id INT
-)
+);
 
 CREATE TABLE accounts   (
     username_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
     password_hash TEXT
-)
+);
