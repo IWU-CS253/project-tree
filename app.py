@@ -13,9 +13,12 @@
 
 
 import os
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import create_implicits
 from sqlite3 import dbapi2 as sqlite3
-from flask import Flask, request, g, redirect, url_for, render_template, flash
+from flask import Flask, request, g, redirect, url_for, render_template, flash, session
 
 # create our little application :)
 app = Flask(__name__)
@@ -188,6 +191,44 @@ def delete_relationship():
     db.commit()
     flash('relationship was deleted')
     return redirect(url_for('show_tree', tree_id=tree_id))
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    """Adds a new tree"""
+    db = get_db()
+    username = request.form['username']
+    password = generate_password_hash(request.form['password'], "sha256")
+    db.execute('INSERT INTO accounts (username, password) VALUES (?,?)',
+               [username,password])
+    db.commit()
+    flash('Account Created')
+    return redirect(url_for('home_page'))
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    db = get_db()
+    cur = db.execute('SELECT password FROM accounts WHERE username = ?',
+        [request.form['username']])
+    database = cur.fetchone()
+    if check_password_hash(request.form['password'], "sha256") == database:
+        session[request.form['username']] = True
+        flash('You were logged in')
+        return redirect(url_for('home_page'))
+    else:
+        flash('Incorrect username or password')
+        return redirect(url_for('login.html'))
+
+    return render_template('homepage')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('home_page'))
+
 
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
