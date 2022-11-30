@@ -1,47 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-    <h2>Add Relationship</h2>
-    <form action="{{ url_for('add_relationship') }}" method="post">
-        <label for="character1">Character 1</label>
-        <select class="mb-1 mt-1" id="character1" name="character1">
-            {% for character1 in characters %}
-              <option value="{{ character1.id }}">{{character1.name}}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="character2">Character 2</label>
-        <select class="mb-1 mt-1" id="character2" name="character2">
-            {% for character2 in characters %}
-              <option value="{{ character2.id }}">{{character2.name}}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="type">Type</label>
-        <select class="mb-1 mt-1" id="type" name="type">
-            <option>Parent - Child</option>
-            <option>Sibling - Sibling</option>
-            <option>Spouse - Spouse</option>
-            <option>Partner - Partner</option>
-            <option>Custom</option>
-        </select>
-        <br>
-        <div class="mb-1 mt-1" id="custom">
-            <input type="text" id="inputType" size="10" name="custom_type">
-        </div>
-        <script type="text/javascript">
-            document.getElementById("type").addEventListener("change", showCustom);
-            function showCustom() {
-                if (document.getElementById("type").value == "Custom") {
-                    document.getElementById("custom").style.visibility='visible';
-                }
-                else {
-                    document.getElementById("custom").style.visibility='hidden';
-                }
+<h2>Add Relationship</h2>
+<form action="{{ url_for('add_relationship') }}" method="post">
+    <label for="character1">Character 1</label>
+    <select class="mb-1 mt-1" id="character1" name="character1">
+        {% for character1 in characters %}
+          <option value="{{ character1.id }}">{{character1.name}}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <label for="character2">Character 2</label>
+    <select class="mb-1 mt-1" id="character2" name="character2">
+        {% for character2 in characters %}
+          <option value="{{ character2.id }}">{{character2.name}}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <label for="type">Type</label>
+    <select class="mb-1 mt-1" id="type" name="type">
+        <option>Parent - Child</option>
+        <option>Sibling - Sibling</option>
+        <option>Spouse - Spouse</option>
+        <option>Partner - Partner</option>
+        <option>Custom</option>
+    </select>
+    <br>
+    <div class="mb-1 mt-1" id="custom">
+        <input type="text" id="inputType" size="10" name="custom_type">
+    </div>
+    <script type="text/javascript">
+        document.getElementById("type").addEventListener("change", showCustom);
+        function showCustom() {
+            if (document.getElementById("type").value == "Custom") {
+                document.getElementById("custom").style.visibility='visible';
             }
-        </script>
-        <label for="description">Description (Optional)</label>
-        <textarea class="form-control" id="description" name="description"></textarea>
-        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-        <input class="mb-1 mt-1" type="submit" value="Add Relationship" aria-labelledby="Add Relationship Button">
-    </form>
-</html>
+            else {
+                document.getElementById("custom").style.visibility='hidden';
+            }
+        }
+    </script>
+    <label for="description">Description (Optional)</label>
+    <textarea class="form-control" id="description" name="description"></textarea>
+    <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+    <input class="mb-1 mt-1" type="submit" value="Add Relationship" aria-labelledby="Add Relationship Button">
+</form>

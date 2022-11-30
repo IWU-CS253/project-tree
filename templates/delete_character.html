@@ -1,8 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-    <form class="col" action="{{ url_for('delete_character') }}" method="post">
-        <input type="hidden" name="id" value="{{ character.id }}">
-        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-        <input type="submit" class="btn btn-secondary btn-sm" aria-labelledby="Delete Character Button" value={{ "Delete" }}>
-    </form>
-</html>
+<form class="col" action="{{ url_for('delete_character') }}" method="post">
+    <input type="hidden" name="id" value="{{ character.id }}">
+    <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+    <input type="submit" class="btn btn-secondary btn-sm" aria-labelledby="Delete Character Button" value={{ "Delete" }}>
+</form>
