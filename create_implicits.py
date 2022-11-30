@@ -227,12 +227,13 @@ def merge_implicits(characters, relationships):
      relationship set, and returns it, along with the resulting graph."""
 
     graph = add_implicits(create_graph(characters, relationships))
+    implicit_rels = []
 
     for char in graph.charList:
         char = graph.get_char(char)
 
     rel_list = []  # Simplifies avoiding duplicates, since relationship objects are fairly complex and difficult to
-    # check exactly without tracking descriptions across the whole file
+    # check exactly without tracking descriptions across the whole file. Also keeps implicits and explicits separate.
     for relationship in relationships:
         rel_list.append((relationship['CHARACTER1'], relationship['CHARACTER2'], relationship['TYPE']))
 
@@ -248,16 +249,16 @@ def merge_implicits(characters, relationships):
                     rel = (char.id, sib.id, 'Sibling - Sibling')
                     alt_rel = (sib.id, char.id, 'Sibling - Sibling')
                     if rel not in rel_list and alt_rel not in rel_list:
-                        relationships.append(full_rel)
+                        implicit_rels.append(full_rel)
                         rel_list.append(rel)
         for parent in char.parents:
             full_rel = {'CHARACTER1': parent.id, 'CHARACTER2': char.id, 'TYPE': 'Parent - Child',
                         'CHAR1_NAME': parent.name, 'CHAR2_NAME': char.name}
             rel = (parent.id, char.id, 'Parent - Child')
             if rel not in rel_list:
-                relationships.append(full_rel)
+                implicit_rels.append(full_rel)
         for pibling in char.piblings:
-            relationships.append({'CHARACTER1': pibling.id, 'CHARACTER2': char.id, 'TYPE': 'Pibling - Nibling',
+            implicit_rels.append({'CHARACTER1': pibling.id, 'CHARACTER2': char.id, 'TYPE': 'Pibling - Nibling',
                                   'CHAR1_NAME': pibling.name, 'CHAR2_NAME': char.name})
         for cousin in char.cousins:
             full_rel = {'CHARACTER1': char.id, 'CHARACTER2': cousin.id, 'TYPE': 'Cousin - Cousin',
@@ -265,15 +266,15 @@ def merge_implicits(characters, relationships):
             rel = (char.id, cousin.id, 'Cousin - Cousin')
             alt_rel = (cousin.id, char.id, 'Cousin - Cousin')
             if rel not in rel_list and alt_rel not in rel_list:
-                relationships.append(full_rel)
+                implicit_rels.append(full_rel)
                 rel_list.append(rel)
         for grandparent in char.grandparents:
             gparent = graph.get_char(grandparent)  # Since iterating through gives us the keys, aka the ids
-            relationships.append({'CHARACTER1': gparent.id, 'CHARACTER2': char.id,
+            implicit_rels.append({'CHARACTER1': gparent.id, 'CHARACTER2': char.id,
                                   'TYPE': char.grandparents[grandparent] + ' - ' + gparent.grandchildren[char.id],
                                   'CHAR1_NAME': gparent.name, 'CHAR2_NAME': char.name})
 
-    return relationships, graph
+    return implicit_rels
 
 
 def test_graph():

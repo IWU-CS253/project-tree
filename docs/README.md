@@ -1,7 +1,7 @@
 Some code in this app was adapted from other resources. 
 
 In app.py, functionality was added to our app with adapted Flaskr Code,
-specifically code for adding/showing entries, initalizing the envrionment/database, and creating our database tables;
+specifically code for adding/showing entries, initializing the environment/database, and creating our database tables;
 if you'd like to see Flaskr's license for more details look under docs 
 in the file LICENSE-Flaskr. 
 

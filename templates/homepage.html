@@ -7,12 +7,14 @@
         <aside class="col-2">
             <div class="flex-grow-1">
                 <ul class="py-3 list-unstyled">
+                    <!--
                     <li class="py-1">
                         <a href="">Login</a>
                     </li>
                     <li class="py-1">
                         <a href="">Create Account</a>
                     </li>
+                    -->
                     <li class="py-1">
                         <b>Local Trees</b>
                             <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
@@ -21,11 +23,8 @@
                             </form>
                             {% for tree in trees %}
                                 <form action="{{ url_for('show_tree') }}" method="get">
-                                    <br>
                                         <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                        <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value={{ tree.tree_name }}>
-                                        <br>
-                                    </dt>
+                                        <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="{{ tree.tree_name }}">
                                 </form>
                             {%  endfor  %}
                     </li>
@@ -35,7 +34,7 @@
         <section class="col-10 px-3 py-3 bg-light border-start border-dark border-3">
             <b>The Family Tree Creator</b> is a tool designed to make it easy for writers or people passionate about
             family history to make aesthetically pleasing and robust visualizations for their families or the families
-            of their characters. <br><br> <b>Login</b> or <b>Create an Account</b> to save your trees, or use the
+            of their characters. <!--<br><br> <b>Login</b> or <b>Create an Account</b> to save your trees, or --> Use the
             textbox on the side to make a new tree to get started on experimenting!
         </section>
     </div>

@@ -70,22 +70,42 @@ def close_db(error):
 @app.route('/tree', methods=['GET'])
 def show_tree():
     db = get_db()
-    cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE tree_id = ?', [request.args['tree_id']])
+    tree_id = request.args['tree_id']
+    cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE tree_id = ?', [tree_id])
     tree = cur.fetchone()
 
-    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [request.args['tree_id']])
+    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
     characters = cur.fetchall()
 
     cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
                      'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
-                     'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [request.args['tree_id']])
+                     'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [tree_id])
     relationships = cur.fetchall()
 
-    relationships = create_implicits.merge_implicits(characters, relationships)[0]
+    cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
+    colors = cur.fetchall()
 
     hierarchy = create_implicits.create_hierarchy(characters, relationships)
 
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, hierarchy=hierarchy)
+    #checks if the colors table is empty for that tree if it is add default values
+    if len(colors) == 0:
+        db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+                   [tree_id, "blue", "Parent - Child"])
+        db.commit()
+        db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+                   [tree_id, "green", "Sibling - Sibling"])
+        db.commit()
+        db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+                   [tree_id, "red", "Spouse - Spouse"])
+        db.commit()
+        db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
+                   [tree_id, "orange", "Partner - Partner"])
+        db.commit()
+        cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
+        colors = cur.fetchall()
+
+    implicit_rels = create_implicits.merge_implicits(characters, relationships)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels, hierarchy=hierarchy)
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -124,7 +144,7 @@ def add_relationship():
     tree_id = request.form['tree_id']
     var = request.form['type']
     if var == 'Custom':
-        var == request.form['custom_type']
+        var = request.form['custom_type']
     db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
                 [request.form['character1'], request.form['character2'], request.form['type'], request.form['description'], tree_id])
     db.commit()
@@ -170,7 +190,6 @@ def delete_relationship():
     db.commit()
     flash('relationship was deleted')
     return redirect(url_for('show_tree', tree_id=tree_id))
-
 
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
