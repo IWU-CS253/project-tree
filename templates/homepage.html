@@ -19,7 +19,7 @@
                         <b>Local Trees</b>
                             <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
                                 <label for="inputName" class="form-label">Add a Tree</label>
-                                <input type="text" id="inputName" size="30" name="tree_name">
+                                <input type="text" id="inputName" size="30" name="tree_name" required="required" aria-required="true">
                             </form>
                             {% for tree in trees %}
                                 <form action="{{ url_for('show_tree') }}" method="get">

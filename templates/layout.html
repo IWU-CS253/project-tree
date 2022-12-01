@@ -18,21 +18,23 @@
         }
     </style>
 </head>
-<div class="row">
-    <header class="display-3 row border-bottom border-3 border-dark">
-        <div class="col-3">
-            <a class="btn" role="button" href="http://127.0.0.1:5000/" aria-label="Return Home Button">
-                <img src="/static/home_icon.png" height=100px width=100px>
-            </a>
-        </div>
-        <div class="col-9">
-            Family Tree Creator
-        </div>
-    </header>
-</div>
-{% for message in get_flashed_messages() %}
-    <div class="alert alert-primary" role="alert">
-        {{ message }}
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="row">
+        <header class="display-3 row border-bottom border-3 border-dark">
+            <div class="col-3">
+                <a class="btn" role="button" href="http://127.0.0.1:5000/" aria-label="Return Home Button">
+                    <img src="/static/home_icon.png" height=100px width=100px>
+                </a>
+            </div>
+            <div class="col-9">
+                Family Tree Creator
+            </div>
+        </header>
     </div>
-{% endfor %}
-{% block body %}{% endblock %}
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-primary" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% block body %}{% endblock %}
+</div>
