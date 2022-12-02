@@ -9,7 +9,8 @@ CREATE TABLE characters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT not null,
     description TEXT,
-    tree_id_character INT
+    tree_id_character INT,
+    FOREIGN KEY (tree_id_character) references trees(tree_id) ON DELETE CASCADE
 );
 
 CREATE TABLE relationships (
@@ -31,7 +32,8 @@ CREATE TABLE trees  (
 CREATE TABLE colors  (
     tree_id_color INT,
     color TEXT,
-    type TEXT
+    type TEXT,
+    FOREIGN KEY (tree_id_color) references trees(tree_id) ON DELETE CASCADE
 );
 
 CREATE TABLE  ids  (
