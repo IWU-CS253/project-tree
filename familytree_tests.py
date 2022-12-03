@@ -162,6 +162,24 @@ class FamilytreeTestCase(unittest.TestCase):
 
         assert b'Parent - Child relationship is blue' in rv.data
 
+    def test_register(self):
+        rv = self.app.post('/register', data=dict(
+            username='zach',
+            password='mark',), follow_redirects=True)
+        assert b'Account Created' in rv.data
+
+    def test_login(self):
+        self.test_register()
+        rv = self.app.post('/login', data=dict(
+            username='zach',
+            password='mark',), follow_redirects=True)
+        assert b'You were logged in' in rv.data
+
+    def test_logout(self):
+        self.test_login()
+        rv = self.app.get('/logout', follow_redirects=True)
+        assert b'You were logged out' in rv.data
+
 
 if __name__ == '__main__':
     unittest.main()

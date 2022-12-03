@@ -123,6 +123,12 @@ def add_tree():
     db.execute('INSERT INTO trees (tree_name) VALUES (?)',
                [tree_name])
     db.commit()
+    #if session['username']:
+        #db = get_db()
+        #database = db.execute('SELECT tree_id FROM trees WHERE tree_name = ? VALUES (?)',
+               #[tree_name])
+        #db.execute('INSERT INTO ids (tree_id, username_id) VALUES (?,?)',
+                   #[database[0], session['username']])
     flash('Added ' + tree_name)
     return redirect(url_for('home_page'))
 
@@ -199,7 +205,7 @@ def register():
     db = get_db()
     username = request.form['username']
     password = generate_password_hash(request.form['password'], "sha256")
-    db.execute('INSERT INTO accounts (username, password) VALUES (?,?)',
+    db.execute('INSERT INTO accounts (username, password_hash) VALUES (?,?)',
                [username,password])
     db.commit()
     flash('Account Created')
@@ -209,26 +215,33 @@ def register():
 @app.route('/login', methods=['POST'])
 def login():
     db = get_db()
-    cur = db.execute('SELECT password FROM accounts WHERE username = ?',
+    cur = db.execute('SELECT password_hash FROM accounts WHERE username = ?',
         [request.form['username']])
     database = cur.fetchone()
-    if check_password_hash(request.form['password'], "sha256") == database:
-        session[request.form['username']] = True
+    if check_password_hash(database[0], request.form['password']):
+        session['username'] = request.form['username']
         flash('You were logged in')
         return redirect(url_for('home_page'))
     else:
         flash('Incorrect username or password')
-        return redirect(url_for('login.html'))
+        return redirect(url_for('login'))
 
     return render_template('homepage')
 
 
 @app.route('/logout')
 def logout():
-    session.pop('logged_in', None)
+    session.pop('username', None)
     flash('You were logged out')
     return redirect(url_for('home_page'))
 
+@app.route('/show_register', methods=['GET'])
+def show_register():
+    return render_template('show_register.html')
+
+@app.route('/show_login', methods=['GET'])
+def show_login():
+    return render_template('show_login.html')
 
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
