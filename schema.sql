@@ -2,6 +2,8 @@ drop table if exists characters;
 drop table if exists relationships;
 drop table if exists trees;
 drop table if exists colors;
+drop table if exists ids;
+drop table if exists accounts;
 
 CREATE TABLE characters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,4 +32,15 @@ CREATE TABLE colors  (
     tree_id_color INT,
     color TEXT,
     type TEXT
+);
+
+CREATE TABLE  ids  (
+    tree_id INT,
+    username_id INT
+);
+
+CREATE TABLE accounts   (
+    username_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password_hash TEXT
 );

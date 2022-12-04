@@ -25,9 +25,31 @@
                 <img src="/static/home_icon.png" height=100px width=100px>
             </a>
         </div>
-        <div class="col-9">
-            Family Tree Creator
-        </div>
+        <div class="col-9" >
+             Family Tree Creator
+            <div class="btn-group" role="group" >
+                <div class="col-xl mx-4" > </div> <div class="col-xl mx-4" > </div> <div class="col-xl mx-4" > </div>
+                <div class="col-xl mx-4" > </div> <div class="col-xl mx-4" > </div>
+                             
+        <form action="{{ url_for('show_register') }} " method="get">
+            <div class="col-xl mx-4" >
+            <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Register Button" value={{ "Register" }}>
+            </div>
+        </form>
+
+        <form action="{{ url_for('show_login') }}" method="get">
+            <div class="col-xl mx-4" >
+            <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Login Button" value={{ "Login" }}>
+            </div>
+
+        </form>
+        <form action="{{ url_for('logout') }}">
+             <div class="col-xl mx-4" >
+            <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Logout Button" value={{ "Logout" }}>
+             </div>
+        </form>
+                </div>
+            </div>
     </header>
 </div>
 {% for message in get_flashed_messages() %}
