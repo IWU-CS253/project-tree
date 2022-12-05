@@ -10,7 +10,7 @@
 
     -->
     
-    <div class="container">
+    <div class="container-fluid min-vh-100 d-flex flex-column">
         <div class="row">
             <div class="col-3 px-1 py-1">
                 <div class="container px-1 py-1">
@@ -87,6 +87,7 @@
                                 {% endfor %}
                             ]);
                             var edges = new vis.DataSet([
+
                                 {% for relationship in relationships %}
                                     {% if  relationship.type == "Parent - Child" %}
                                         {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'blue'}},
@@ -103,11 +104,21 @@
                            ]);
                            // create a network
                             var container = document.getElementById('mynetwork');
+
                            // provide the data in the vis format
+
+
+                           // create a network
+                            var container = document.getElementById('mynetwork');
+
+                           // provide the data in the vis format
+                            // provide the data in the vis format
+
                             var data = {
                                 nodes: nodes,
                                 edges: edges
                             };
+
                             var options = {
                                 layout: {
                                     hierarchical: {
@@ -119,6 +130,7 @@
                                  
                             // initialize network!
                             var network = new vis.Network(container, data, options);
+
 
                         </script>
                     </div>
