@@ -79,15 +79,6 @@ def show_tree():
     cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE tree_id = ?', [tree_id])
     tree = cur.fetchone()
 
-    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
-    characters = cur.fetchall()
-
-    cur = db.execute(
-        'SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
-        'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
-        'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [tree_id])
-    relationships = cur.fetchall()
-
     cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
     colors = cur.fetchall()
 
@@ -105,12 +96,20 @@ def show_tree():
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
                    [tree_id, "orange", "Partner - Partner"])
         db.commit()
-        cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
-        colors = cur.fetchall()
+
+    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
+    characters = cur.fetchall()
+
+    cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name", clr.color AS "color" '
+                     'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
+                     'JOIN characters AS c2 ON r.character2 = c2.id '
+                     'LEFT OUTER JOIN colors AS clr ON r.type = clr.type WHERE r.tree_id_relationship = ?', [tree_id])
+                        # NOTE: Needs to be a Left Outer Join or relationships w/out defined colors like customs
+                        # will be lost
+    relationships = cur.fetchall()
 
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships,
-                           colors=colors, implicits=implicit_rels)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, implicits=implicit_rels, colors=colors)
 
 
 @app.route('/', methods=['GET'])
@@ -163,13 +162,30 @@ def add_character():
 def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
-    var = request.form['type']
-    if var == 'Custom':
-        var = request.form['custom_type']
-    db.execute(
-        'INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
-        [request.form['character1'], request.form['character2'], request.form['type'], request.form['description'],
-         tree_id])
+    rel_type = request.form['type']
+    char1 = request.form['character1']
+    char2 = request.form['character2']
+    if char1 == char2:
+        flash('Character cannot be in a relationship with themselves')
+        return redirect(url_for('show_tree', tree_id=tree_id))
+    if rel_type == 'Parent - Child':
+        cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
+        characters = cur.fetchall()
+
+        cur = db.execute(
+            'SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
+            'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
+            'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [tree_id])
+        relationships = cur.fetchall()
+
+        if create_implicits.check_loops(characters, relationships, char1, char2):
+            flash('Character cannot be their own ancestor')
+            return redirect(url_for('show_tree', tree_id=tree_id))
+
+    if rel_type == 'Custom':
+        rel_type = request.form['custom_type']
+    db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
+                [char1, char2, rel_type, request.form['description'], tree_id])
     db.commit()
     flash('added relationship')
     return redirect(url_for('show_tree', tree_id=tree_id))

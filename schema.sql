@@ -30,7 +30,7 @@ CREATE TABLE relationships (
     type TEXT,
     description TEXT,
     tree_id_relationship INT,
-    PRIMARY KEY (character1, character2),
+    PRIMARY KEY (character1, character2, type),
     FOREIGN KEY (character1) references characters(id) ON DELETE CASCADE,
     FOREIGN KEY (character2) references characters(id) ON DELETE CASCADE
 );

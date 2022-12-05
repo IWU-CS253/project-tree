@@ -43,7 +43,7 @@
                 <div class="mx-auto" style="width: 600px;">
                 <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
                     <label for="inputName" class="form-label">Create a New Tree Here</label>
-                    <input type="text" id="inputName" size="30" name="tree_name">
+                    <input type="text" id="inputName" size="30" name="tree_name" required="required" aria-required="True">
                     <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="Add Tree">
                 </form>
                 <img src="/static/example.png" height=500px width=500px>
