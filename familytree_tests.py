@@ -19,6 +19,7 @@ class FamilytreeTestCase(unittest.TestCase):
 
     # A simple placeholder test; can be removed once first tests are added
     def test_add_tree(self):
+        self.app.get('/')
         rv = self.app.post('/add-tree', data=dict(
             tree_name="Tree1"
         ), follow_redirects=True)
@@ -27,6 +28,8 @@ class FamilytreeTestCase(unittest.TestCase):
 
     def test_add_character(self):
         self.test_add_tree()
+        self.app.get('/')  # Since the tests are a "guest", they need to go the homepage to get assigned an id to store
+        # their stuff
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
             tree_id=1
@@ -136,7 +139,7 @@ class FamilytreeTestCase(unittest.TestCase):
             character1=1, character2=2, tree_id=1), follow_redirects=True)
 
         assert b'Alice & George:' not in deleted_rv.data
-        
+
         assert b'relationship was deleted' in deleted_rv.data
 
     def test_default_legend(self):
@@ -165,14 +168,14 @@ class FamilytreeTestCase(unittest.TestCase):
     def test_register(self):
         rv = self.app.post('/register', data=dict(
             username='zach',
-            password='mark',), follow_redirects=True)
+            password='mark', ), follow_redirects=True)
         assert b'Account Created' in rv.data
 
     def test_login(self):
         self.test_register()
         rv = self.app.post('/login', data=dict(
             username='zach',
-            password='mark',), follow_redirects=True)
+            password='mark', ), follow_redirects=True)
         assert b'You were logged in' in rv.data
 
     def test_logout(self):
@@ -181,6 +184,7 @@ class FamilytreeTestCase(unittest.TestCase):
         assert b'You were logged out' in rv.data
 
     def test_delete_tree(self):
+        self.app.get('/')
         rv = self.app.post('/add-tree', data=dict(
             tree_name="Tree1"
         ), follow_redirects=True)
@@ -191,6 +195,7 @@ class FamilytreeTestCase(unittest.TestCase):
         assert b'Tree1' not in rv.data
 
         assert b'tree was deleted' in rv.data
+
 
 if __name__ == '__main__':
     unittest.main()
