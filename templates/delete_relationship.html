@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
-        <input type="hidden" name="character1" value="{{ relationship.character1 }}">
-        <input type="hidden" name="character2" value="{{ relationship.character2 }}">
-        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-        <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship" aria-labelledby="Delete Relationship Button">
-    </form>
-</html>
+<form action="{{ url_for('delete_relationship') }}" method="post" class="add-entry">
+    <input type="hidden" name="character1" value="{{ relationship.character1 }}">
+    <input type="hidden" name="character2" value="{{ relationship.character2 }}">
+    <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+    <input type="submit" class="btn btn-primary btn-sm" value="Delete Relationship" aria-labelledby="Delete Relationship Button">
+</form>
