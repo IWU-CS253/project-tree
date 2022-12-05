@@ -218,26 +218,27 @@ def check_loops(characters, relationships, char1, char2):
     char2 = graph.get_char(int(char2))
     if recur_check_loops(graph, char1, char2):
         return True
-    #if recur_check_loops(graph, char2, char1):
-   #     return True
 
 
 def recur_check_loops(graph, char1, char2, visited=[]):
     visited.append(char1)
+    loops = False
 
     for parent in char1.parents:
         if parent not in visited:
             if parent == char2:
                 return True
             else:
-                return recur_check_loops(graph, parent, char2, visited)
+                loops = recur_check_loops(graph, parent, char2, visited)
 
     for child in char1.children:
         if child not in visited:
             if child == char2:
                 return True
             else:
-                return recur_check_loops(graph, child, char2, visited)
+                loops = recur_check_loops(graph, child, char2, visited)
+
+    return loops
 
 
 def merge_implicits(characters, relationships):
