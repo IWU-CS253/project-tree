@@ -18,18 +18,45 @@
         }
     </style>
 </head>
-<div class="container-fluid min-vh-100 d-flex flex-column">
-    <div class="row">
-        <header class="display-3 row border-bottom border-3 border-dark">
-            <div class="col-3">
-                <a class="btn" role="button" href="http://127.0.0.1:5000/" aria-label="Return Home Button">
-                    <img src="/static/home_icon.png" height=100px width=100px>
-                </a>
+
+<div class="row">
+    <header class="display-3 row border-bottom border-3 border-dark">
+        <div class="col-3">
+            <a class="btn" role="button" href="/" aria-label="Return Home Button">
+                <img src="/static/home_icon.png" height=100px width=100px>
+            </a>
+        </div>
+        <div class="col-9" >
+             Family Tree Creator
+            <div class="btn-group" role="group" >
+                <div class="col-xl mx-4" > </div> <div class="col-xl mx-4" > </div> <div class="col-xl mx-4" > </div>
+                <div class="col-xl mx-4" > </div> <div class="col-xl mx-4" > </div>
+                             
+        <form action="{{ url_for('show_register') }} " method="get">
+            <div class="col-xl mx-4" >
+            <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Register Button" value={{ "Register" }}>
             </div>
-            <div class="col-9">
-                Family Tree Creator
+        </form>
+
+        <form action="{{ url_for('show_login') }}" method="get">
+            <div class="col-xl mx-4" >
+            <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Login Button" value={{ "Login" }}>
             </div>
-        </header>
+
+        </form>
+        <form action="{{ url_for('logout') }}">
+             <div class="col-xl mx-4" >
+            <input type="submit" class="btn btn-primary btn-sm" aria-labelledby="Logout Button" value={{ "Logout" }}>
+             </div>
+        </form>
+                </div>
+            </div>
+    </header>
+</div>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-primary" role="alert">
+        {{ message }}
+
     </div>
     {% for message in get_flashed_messages() %}
         <div class="alert alert-primary" role="alert">

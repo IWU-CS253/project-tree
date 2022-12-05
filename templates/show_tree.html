@@ -87,16 +87,10 @@
                             var edges = new vis.DataSet([
 
                                 {% for relationship in relationships %}
-                                    {% if  relationship.type == "Parent - Child" %}
-                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'blue'}},
-                                    {% elif  relationship.type == "Sibling - Sibling" %}
-                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'green'}},
-                                    {% elif  relationship.type == "Spouse - Spouse" %}
-                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'red'}},
-                                    {% elif  relationship.type == "Partner - Partner" %}
-                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'orange'}},
-                                    {% elif  relationship.type == "Custom" %}
+                                    {% if relationship.type not in ['Spouse - Spouse', 'Parent - Child', 'Sibling - Sibling', 'Partner - Partner'] %}
                                         {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'black'}},
+                                    {% else %}
+                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'{{ relationship.color }}'}},
                                     {% endif %}
                                 {% endfor %}
                            ]);

@@ -11,11 +11,15 @@
     See LICENSE for more details.
 """
 
-
 import os
+import random
+import string
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import create_implicits
 from sqlite3 import dbapi2 as sqlite3
-from flask import Flask, request, g, redirect, url_for, render_template, flash
+from flask import Flask, request, g, redirect, url_for, render_template, flash, session
 
 # create our little application :)
 app = Flask(__name__)
@@ -67,6 +71,7 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
+
 @app.route('/tree', methods=['GET'])
 def show_tree():
     db = get_db()
@@ -74,18 +79,10 @@ def show_tree():
     cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE tree_id = ?', [tree_id])
     tree = cur.fetchone()
 
-    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
-    characters = cur.fetchall()
-
-    cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
-                     'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
-                     'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [tree_id])
-    relationships = cur.fetchall()
-
     cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
     colors = cur.fetchall()
 
-    #checks if the colors table is empty for that tree if it is add default values
+    # checks if the colors table is empty for that tree if it is add default values
     if len(colors) == 0:
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
                    [tree_id, "blue", "Parent - Child"])
@@ -99,30 +96,57 @@ def show_tree():
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
                    [tree_id, "orange", "Partner - Partner"])
         db.commit()
-        cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
-        colors = cur.fetchall()
+
+    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
+    characters = cur.fetchall()
+
+    cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name", clr.color AS "color" '
+                     'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
+                     'JOIN characters AS c2 ON r.character2 = c2.id '
+                     'LEFT OUTER JOIN colors AS clr ON r.type = clr.type WHERE r.tree_id_relationship = ?', [tree_id])
+                        # NOTE: Needs to be a Left Outer Join or relationships w/out defined colors like customs
+                        # will be lost
+    relationships = cur.fetchall()
 
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
+
     generations = create_implicits.create_generations(characters, relationships)
+    
     return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels, generations=generations)
+
 
 @app.route('/', methods=['GET'])
 def home_page():
+    string_letters = string.ascii_lowercase
+    if 'guest_code' not in session:
+        guest_word = ''
+        for i in range(25):
+            guest_word = guest_word + string_letters[random.randint(0, 25)]
+        session['guest_code'] = guest_word
+
+    user = find_user()
+
     db = get_db()
-    cur = db.execute('SELECT tree_name, tree_id FROM trees')
+    cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE username = \'{}\''.format(user))
     trees = cur.fetchall()
     return render_template('homepage.html', trees=trees)
+
 
 @app.route('/add-tree', methods=['POST'])
 def add_tree():
     """Adds a new tree"""
+
+    user = find_user()
+
     db = get_db()
     tree_name = request.form['tree_name']
-    db.execute('INSERT INTO trees (tree_name) VALUES (?)',
-               [tree_name])
+    db.execute('INSERT INTO trees (tree_name, username) VALUES (?, ?)',
+               [tree_name, user])
     db.commit()
+
     flash('Added ' + tree_name)
     return redirect(url_for('home_page'))
+
 
 @app.route('/add-character', methods=['POST'])
 def add_character():
@@ -142,6 +166,7 @@ def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
 
+
     var = request.form['type']
     if var == 'Custom':
         var = request.form['custom_type']
@@ -152,6 +177,25 @@ def add_relationship():
     if char1 == char2:
         flash('Character cannot be in a relationship with themselves')
         return redirect(url_for('show_tree', tree_id=tree_id))
+
+    if rel_type == 'Custom':
+        rel_type = request.form['custom_type']
+
+
+    if rel_type == 'Parent - Child':
+        cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
+        characters = cur.fetchall()
+
+        cur = db.execute(
+            'SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
+            'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
+            'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [tree_id])
+        relationships = cur.fetchall()
+
+        if create_implicits.check_loops(characters, relationships, char1, char2):
+            flash('Character cannot be their own ancestor')
+            return redirect(url_for('show_tree', tree_id=tree_id))
+
     if rel_type == 'Custom':
         rel_type = request.form['custom_type']
 
@@ -176,7 +220,8 @@ def delete_character():
 def edit_character():
     db = get_db()
     tree_id = request.form['tree_id']
-    cur = db.execute('select id, name from characters where id = ? and tree_id_character = ?', [request.form['id'], tree_id])
+    cur = db.execute('select id, name from characters where id = ? and tree_id_character = ?',
+                     [request.form['id'], tree_id])
     characters = cur.fetchone()
     return render_template('edit.html', characters=characters, tree_id=tree_id)
 
@@ -201,6 +246,53 @@ def delete_relationship():
     flash('relationship was deleted')
     return redirect(url_for('show_tree', tree_id=tree_id))
 
+
+@app.route('/register', methods=['POST'])
+def register():
+    db = get_db()
+    username = request.form['username']
+    password = generate_password_hash(request.form['password'], "sha256")
+    db.execute('INSERT INTO accounts (username, password_hash) VALUES (?,?)',
+               [username, password])
+    db.commit()
+    flash('Account Created')
+    return redirect(url_for('home_page'))
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    db = get_db()
+    cur = db.execute('SELECT password_hash FROM accounts WHERE username = ?',
+                     [request.form['username']])
+    database = cur.fetchone()
+    if check_password_hash(database[0], request.form['password']):
+        session['username'] = request.form['username']
+        flash('You were logged in')
+        return redirect(url_for('home_page'))
+    else:
+        flash('Incorrect username or password')
+        return redirect(url_for('login'))
+
+    return render_template('homepage')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash('You were logged out')
+    return redirect(url_for('home_page'))
+
+
+@app.route('/show_register', methods=['GET'])
+def show_register():
+    return render_template('show_register.html')
+
+
+@app.route('/show_login', methods=['GET'])
+def show_login():
+    return render_template('show_login.html')
+
+
 @app.route('/delete_tree', methods=['POST'])
 def delete_tree():
     db = get_db()
@@ -211,7 +303,17 @@ def delete_tree():
     flash('tree was deleted')
     return redirect(url_for('home_page'))
 
+
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
 def implicit_test_graph():
     create_implicits.test_graph()
+
+
+def find_user():
+    if 'username' in session:
+        user = session['username']
+    else:
+        user = session['guest_code']
+
+    return user

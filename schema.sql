@@ -13,8 +13,7 @@ CREATE TABLE accounts   (
 CREATE TABLE trees  (
     tree_id INTEGER PRIMARY KEY AUTOINCREMENT,
     tree_name TEXT,
-    username_id INT,
-    FOREIGN KEY (username_id) references accounts(username_id)
+    username TEXT
 );
 
 CREATE TABLE characters (
