@@ -85,7 +85,6 @@ def show_tree():
     cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
     colors = cur.fetchall()
 
-    hierarchy = create_implicits.create_hierarchy(characters, relationships)
 
     #checks if the colors table is empty for that tree if it is add default values
     if len(colors) == 0:
@@ -105,7 +104,8 @@ def show_tree():
         colors = cur.fetchall()
 
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels, hierarchy=hierarchy)
+    generations = create_implicits.create_generations(characters, relationships)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels, generations=generations)
 
 @app.route('/', methods=['GET'])
 def home_page():

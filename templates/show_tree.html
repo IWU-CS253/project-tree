@@ -83,7 +83,7 @@
                             // create an array with nodes
                             var nodes = new vis.DataSet([
                                 {% for character in characters %}
-                                    {id: {{ character.id }}, label: "{{ character.name }}", level:  {{hierarchy[character.id]}}},
+                                    {id: {{ character.id }}, label: "{{ character.name }}", level:  {{generations[character.id]}}},
                                 {% endfor %}
                             ]);
                             var edges = new vis.DataSet([
