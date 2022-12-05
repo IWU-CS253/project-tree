@@ -189,6 +189,16 @@ def delete_relationship():
     flash('relationship was deleted')
     return redirect(url_for('show_tree', tree_id=tree_id))
 
+@app.route('/delete_tree', methods=['POST'])
+def delete_tree():
+    db = get_db()
+    tree_id = request.form['tree_id']
+    db.execute('DELETE FROM trees WHERE tree_id = ?',
+               [tree_id])
+    db.commit()
+    flash('tree was deleted')
+    return redirect(url_for('home_page'))
+
 # For run configurations to test the create_implicits graphs
 @app.cli.command('testgraph')
 def implicit_test_graph():
