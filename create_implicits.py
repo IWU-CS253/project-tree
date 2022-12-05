@@ -189,18 +189,6 @@ def recur_grandparents(graph, base_char, cur_char, level=0):
     return graph
 
 
-def create_hierarchy(characters, relationships):
-    graph = add_implicits(create_graph(characters, relationships))
-    new_dictionary = {}
-    for character in graph.charList:
-        char = graph.get_char(character)
-        if len(char.parents) != 0:
-            new_dictionary.update({char.id: (1 + len(char.grandparents))})
-        else:
-            new_dictionary.update({char.id: 0})
-
-    return new_dictionary
-
 
 def implicit_grandparents(graph):
     for character in graph.charList:
@@ -319,3 +307,85 @@ def test_graph():
             if grandparent:
                 print('character: ', str(character), ' Grandparent: ', str(grandparent),
                       str(char.grandparents[grandparent]))
+
+def recur_generations(graph, char, visited=[]):
+    visited.append(char)
+    distance = char.generation
+
+    for child in char.children:
+        if child not in visited:
+            distance += 1
+            child.generation = distance
+            recur_generations(graph, child, visited)
+
+    distance = char.generation  # Resetting distance to the proper recursion depth
+
+    for parent in char.parents:
+        if parent not in visited:
+            distance -= 1
+            parent.generation = distance
+            recur_generations(graph, parent, visited)
+
+    distance = char.generation  # Resetting distance to the proper recursion depth
+
+    for sibling in graph.charList:
+        sib = graph.get_char(sibling)
+        if sib.sibling_num == char.sibling_num and sib.sibling_num != 0:
+            if sib not in visited:
+                sib.generation = distance
+                recur_generations(graph, sib, visited)
+
+    return graph
+
+
+def create_generations(characters, relationships):
+    graph = add_implicits(create_graph(characters, relationships))
+    pivot_chars = find_top(graph)
+    for char in pivot_chars:
+        char.generation = 0
+        graph = recur_generations(graph, char)
+
+    # Applying generations to siblings who may have been missed
+    for character in graph.charList:
+        char = graph.get_char(character)
+        if char.sibling_num != 0 and char.generation:
+            for sibling in graph.charList:
+                sib = graph.get_char(sibling)
+                if sib.sibling_num == char.sibling_num:
+                    sib.generation = char.generation
+
+    # Creating a dictionary to be passed to the html for generations
+    generations = {}
+    for character in graph.charList:
+        char = graph.get_char(character)
+        generations[char.id] = char.generation
+
+    return generations
+
+
+# Note that this does not necessarily find the true top; just an acceptable point of reference (a character with no
+# parents)
+def find_top(graph):
+    checked = []  # A list of checked sibling numbers to avoid ridiculous amounts of excessive looping
+    top_char = []  # A list of all top characters
+    for character in graph.charList:
+        char = graph.get_char(character)
+        if char.sibling_num == 0:
+            if len(char.parents) == 0:
+                top_char.append(char)
+        elif char.sibling_num not in checked:
+            if len(char.parents) == 0:
+                for sibling in graph.charList:
+                    sib = graph.get_char(sibling)
+                    if sib.sibling_num == char.sibling_num:
+                        if len(sib.parents) != 0:
+                            checked.append(char.sibling_num)
+
+                if char.sibling_num not in checked:
+                    top_char.append(char)
+
+            else:
+                checked.append(char.sibling_num)
+
+    return top_char
+
