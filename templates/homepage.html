@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 {% extends "layout.html" %}
 {% block body %}
 <body>
@@ -21,24 +19,43 @@
                                 <label for="inputName" class="form-label">Add a Tree</label>
                                 <input type="text" id="inputName" size="30" name="tree_name" required="required" aria-required="true">
                             </form>
-                            {% for tree in trees %}
-                                <form action="{{ url_for('show_tree') }}" method="get">
-                                        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                        <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="{{ tree.tree_name }}">
-                                </form>
-                            {%  endfor  %}
+                        <b>My Trees</b>
+                            <div class="py-2">
+                                {% for tree in trees %}
+                                    <div class="btn-group" role="group" >
+                                    <form action="{{ url_for('show_tree') }}" method="get">
+                                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+                                            <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="{{ tree.tree_name }}">
+                                    </form>
+                                    <div class="col-2">
+                                    </div>
+                                    <form action="{{ url_for('delete_tree') }}" method="post">
+                                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+                                            <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="Delete">
+                                    </form>
+                                    </div>
+                                {%  endfor  %}
+                            </div>
+
                     </li>
                 </ul>
             </div>
         </aside>
         <section class="col-10 px-3 py-3 bg-light border-start border-dark border-3">
-            <b>The Family Tree Creator</b> is a tool designed to make it easy for writers or people passionate about
-            family history to make aesthetically pleasing and robust visualizations for their families or the families
-            of their characters. <!--<br><br> <b>Login</b> or <b>Create an Account</b> to save your trees, or --> Use the
-            textbox on the side to make a new tree to get started on experimenting!
+                <b>The Family Tree Creator</b> is a tool designed to make it easy for writers or people passionate about
+                family history to make aesthetically pleasing and robust visualizations for their families or the families
+                of their characters. <!--<br><br> <b>Login</b> or <b>Create an Account</b> to save your trees, or --> Use the
+                textbox below to make a new tree to get started on experimenting!
+                <div class="mx-auto" style="width: 600px;">
+                <form action="{{ url_for('add_tree') }}" method="post" class="add-tree">
+                    <label for="inputName" class="form-label">Create a New Tree Here</label>
+                    <input type="text" id="inputName" size="30" name="tree_name">
+                    <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="Add Tree">
+                </form>
+                <img src="/static/example.png" height=500px width=500px>
+            </div>
         </section>
     </div>
 </div>
 </body>
 {% endblock %}
-</html>
