@@ -81,10 +81,9 @@
                             // create an array with nodes
                             var nodes = new vis.DataSet([
                                 {% for character in characters %}
-                                    {id: {{ character.id }}, label: "{{ character.name }}"},
+                                    {id: {{ character.id }}, label: "{{ character.name }}", level:  {{generations[character.id]}}},
                                 {% endfor %}
                             ]);
-
                             var edges = new vis.DataSet([
 
                                 {% for relationship in relationships %}
@@ -93,25 +92,35 @@
                                     {% else %}
                                         {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'{{ relationship.color }}'}},
                                     {% endif %}
-
                                 {% endfor %}
                            ]);
-
-                            // create a network
+                           // create a network
                             var container = document.getElementById('mynetwork');
+
+                           // provide the data in the vis format
+
 
                            // create a network
                             var container = document.getElementById('mynetwork');
 
                            // provide the data in the vis format
                             // provide the data in the vis format
+
                             var data = {
                                 nodes: nodes,
                                 edges: edges
                             };
-                            var options = {};
 
-                           // initialize your network!
+                            var options = {
+                                layout: {
+                                    hierarchical: {
+                                        direction: "UD",
+                                        sortMethod: "directed",
+                                    },
+                                },
+                            };
+                                 
+                            // initialize network!
                             var network = new vis.Network(container, data, options);
 
 

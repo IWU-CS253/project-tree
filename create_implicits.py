@@ -13,6 +13,8 @@ class Character:
         self.niblings = []  # list of nibling characters
         self.piblings = []  # list of pibling characters
         self.cousins = []  # list of cousin characters
+        self.partners = []  # List of spouses/partners; only used for generation creation
+        self.generation = None
         self.grandparents = {}  # Dictionary of grandparents; keys are character ids, values are levels
         # e.g. distinguishing great grandparent from great ... grandparent
         self.grandchildren = {}  # Same functionality as grandparents dictionary
@@ -62,6 +64,10 @@ def create_graph(characters, relationships):
         if relationship['TYPE'] == 'Parent - Child':
             char1.add_child(char2)
             char2.add_parent(char1)
+
+        if relationship['TYPE'] == 'Partner - Partner' or relationship['TYPE'] == 'Spouse - Spouse':
+            char1.partners.append(char2)
+            char2.partners.append(char1)
 
         # Adds siblings to the graph, and adds implicit siblings transitively
         # Eg if a & b are siblings and b & c are siblings, makes them all siblings via sibling_nums
@@ -191,12 +197,12 @@ def recur_grandparents(graph, base_char, cur_char, level=0):
     return graph
 
 
+
 def implicit_grandparents(graph):
     for character in graph.charList:
         char = graph.get_char(character)
-        if len(char.parents) != 0:
-            for parent in char.parents:
-                graph = recur_grandparents(graph, char, parent)
+        for parent in char.parents:
+            graph = recur_grandparents(graph, char, parent)
     return graph
 
 
@@ -249,8 +255,10 @@ def merge_implicits(characters, relationships):
     graph = add_implicits(create_graph(characters, relationships))
     implicit_rels = []
 
+
     for char in graph.charList:
         char = graph.get_char(char)
+
 
     rel_list = []  # Simplifies avoiding duplicates, since relationship objects are fairly complex and difficult to
     # check exactly without tracking descriptions across the whole file. Also keeps implicits and explicits separate.
@@ -301,7 +309,8 @@ def test_graph():
     characters = [{'ID': 1, 'NAME': 'A'}, {'ID': 2, 'NAME': 'B'}, {'ID': 3, 'NAME': 'C'}, {'ID': 4, 'NAME': 'D'},
                   {'ID': 5, 'NAME': 'E'},
                   {'ID': 6, 'NAME': 'F'}, {'ID': 7, 'NAME': 'G'}, {'ID': 8, 'NAME': 'H'}, {'ID': 9, 'NAME': 'I'},
-                  {'ID': 10, 'NAME': 'J'}, {'ID': 11, 'NAME': 'K'}, {'ID': 12, 'NAME': 'L'}, {'ID': 13, 'NAME': 'M'}]
+                  {'ID': 10, 'NAME': 'J'}, {'ID': 11, 'NAME': 'K'}, {'ID': 12, 'NAME': 'L'}, {'ID': 13, 'NAME': 'M'},
+                  {'ID': 14, 'NAME': 'M'}]
     # This format mirrors the way sqlite objects are structured, and how we will access the relevant attributes
     relationships = [{'CHARACTER1': 1, 'CHARACTER2': 2, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 1, 'CHARACTER2': 3, 'TYPE': 'Parent - Child'},
@@ -311,18 +320,24 @@ def test_graph():
                      {'CHARACTER1': 3, 'CHARACTER2': 7, 'TYPE': 'Sibling - Sibling'},
                      {'CHARACTER1': 8, 'CHARACTER2': 9, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 9, 'CHARACTER2': 1, 'TYPE': 'Sibling - Sibling'},
+                     {'CHARACTER1': 9, 'CHARACTER2': 10, 'TYPE': 'Sibling - Sibling'},
                      {'CHARACTER1': 10, 'CHARACTER2': 11, 'TYPE': 'Parent - Child'},
                      {'CHARACTER1': 11, 'CHARACTER2': 12, 'TYPE': 'Parent - Child'},
-                     {'CHARACTER1': 12, 'CHARACTER2': 13, 'TYPE': 'Parent - Child'}]
+                     {'CHARACTER1': 12, 'CHARACTER2': 13, 'TYPE': 'Parent - Child'},
+                     {'CHARACTER1': 10, 'CHARACTER2': 14, 'TYPE': 'Sibling - Sibling'}]
 
     base_graph = create_graph(characters, relationships)
     graph = add_implicits(base_graph)
+    generations = create_generations(characters, relationships)
     for child in graph.get_char(1).children:
         print(child.id)
     print(graph.get_char(8).children[0].id)
     for character in graph.charList:
         char = graph.get_char(character)
-        print('character: ', str(character), ' sibnum: ', str(char.sibling_num))
+        print('character: ', str(character), ' sibnum: ', str(char.sibling_num), ' generation: ',
+              str(generations[char.id]))
+
+    '''
         for parent in char.parents:
             if parent:
                 print('character: ', str(character), ' Parent: ', str(parent.id))
@@ -338,4 +353,100 @@ def test_graph():
         for grandparent in char.grandparents:
             if grandparent:
                 print('character: ', str(character), ' Grandparent: ', str(grandparent),
+
                       str(char.grandparents[grandparent]))
+
+                      str(char.grandparents[grandparent]))'''
+
+
+
+def recur_generations(graph, char, visited=[]):
+    visited.append(char)
+    distance = char.generation
+
+    for child in char.children:
+        if child not in visited:
+            distance += 1
+            child.generation = distance
+            recur_generations(graph, child, visited)
+
+    distance = char.generation  # Resetting distance to the proper recursion depth
+
+    for parent in char.parents:
+        if parent not in visited:
+            distance -= 1
+            parent.generation = distance
+            recur_generations(graph, parent, visited)
+
+    distance = char.generation  # Resetting distance to the proper recursion depth
+
+    for sibling in graph.charList:
+        sib = graph.get_char(sibling)
+        if sib.sibling_num == char.sibling_num and sib.sibling_num != 0:
+            if sib not in visited:
+                sib.generation = distance
+                recur_generations(graph, sib, visited)
+
+    return graph
+
+
+def create_generations(characters, relationships):
+    graph = add_implicits(create_graph(characters, relationships))
+    pivot_chars = find_top(graph)
+    for char in pivot_chars:
+        char.generation = 0
+        graph = recur_generations(graph, char)
+
+    # Applying generations to siblings who may have been missed
+    for character in graph.charList:
+        char = graph.get_char(character)
+        if char.sibling_num != 0 and char.generation:
+            for sibling in graph.charList:
+                sib = graph.get_char(sibling)
+                if sib.sibling_num == char.sibling_num:
+                    sib.generation = char.generation
+
+
+    for character in graph.charList:
+        char = graph.get_char(character)
+        for partner in char.partners:
+            if partner.generation != char.generation and partner.generation == 0:  # In other words, if a partner has no
+                # generational information and defaulted to the top
+                partner.generation = char.generation
+
+
+    # Creating a dictionary to be passed to the html for generations
+    generations = {}
+    for character in graph.charList:
+        char = graph.get_char(character)
+        generations[char.id] = char.generation
+
+    return generations
+
+
+# Note that this does not necessarily find the true top; just an acceptable point of reference (a character with no
+# parents)
+def find_top(graph):
+    checked = []  # A list of checked sibling numbers to avoid ridiculous amounts of excessive looping
+    top_char = []  # A list of all top characters
+    for character in graph.charList:
+        char = graph.get_char(character)
+        if char.sibling_num == 0:
+            if len(char.parents) == 0:
+                top_char.append(char)
+        elif char.sibling_num not in checked:
+            if len(char.parents) == 0:
+                for sibling in graph.charList:
+                    sib = graph.get_char(sibling)
+                    if sib.sibling_num == char.sibling_num:
+                        if len(sib.parents) != 0:
+                            checked.append(char.sibling_num)
+
+                if char.sibling_num not in checked:
+                    top_char.append(char)
+
+            else:
+                checked.append(char.sibling_num)
+
+    return top_char
+

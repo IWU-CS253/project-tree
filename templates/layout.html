@@ -18,6 +18,7 @@
         }
     </style>
 </head>
+
 <div class="row">
     <header class="display-3 row border-bottom border-3 border-dark">
         <div class="col-3">
@@ -52,9 +53,11 @@
             </div>
     </header>
 </div>
-{% for message in get_flashed_messages() %}
-    <div class="alert alert-primary" role="alert">
-        {{ message }}
-    </div>
-{% endfor %}
-{% block body %}{% endblock %}
+
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-primary" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% block body %}{% endblock %}
+</div>
