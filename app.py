@@ -13,6 +13,8 @@
 
 
 import os
+import random
+import string
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -111,6 +113,7 @@ def show_tree():
 @app.route('/', methods=['GET'])
 def home_page():
     db = get_db()
+    session['guest'] = 'random'
     cur = db.execute('SELECT tree_name, tree_id FROM trees')
     trees = cur.fetchall()
     return render_template('homepage.html', trees=trees)
@@ -123,12 +126,35 @@ def add_tree():
     db.execute('INSERT INTO trees (tree_name) VALUES (?)',
                [tree_name])
     db.commit()
-    #if session['username']:
+
+    # if session['username']:
+    # if session['username']:
+    #   user = session['username']
+    # else:
+    #   user = session['guest']
+
         #db = get_db()
         #database = db.execute('SELECT tree_id FROM trees WHERE tree_name = ? VALUES (?)',
                #[tree_name])
         #db.execute('INSERT INTO ids (tree_id, username_id) VALUES (?,?)',
                    #[database[0], session['username']])
+
+    # if session['username']:
+    #   user = session['username']
+    # else:
+    #
+    # string_letters = string.ascii_lowercase
+    # guest_word = ''
+    # for i in range(25):
+    #   guest_word = guest_word + string_letters[random.randint(0,25)]
+    # session['guest'] = guest_word
+    # user = session['guest']
+    #
+    # db = get_db()
+    #         #database = db.execute('SELECT tree_id FROM trees WHERE tree_name = ? VALUES (?)',
+    #                #[tree_name])
+    #         #db.execute('INSERT INTO ids (tree_id, username_id) VALUES (?,?)',
+    #                    #[database[0], user])
     flash('Added ' + tree_name)
     return redirect(url_for('home_page'))
 
