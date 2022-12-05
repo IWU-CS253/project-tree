@@ -103,7 +103,8 @@ def show_tree():
         colors = cur.fetchall()
 
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels)
+    generations = create_implicits.create_generations(characters, relationships)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels, generations=generations)
 
 @app.route('/', methods=['GET'])
 def home_page():
