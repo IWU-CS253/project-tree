@@ -74,18 +74,10 @@ def show_tree():
     cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE tree_id = ?', [tree_id])
     tree = cur.fetchone()
 
-    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
-    characters = cur.fetchall()
-
-    cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
-                     'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
-                     'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [tree_id])
-    relationships = cur.fetchall()
-
     cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
     colors = cur.fetchall()
 
-    #checks if the colors table is empty for that tree if it is add default values
+    # checks if the colors table is empty for that tree if it is add default values
     if len(colors) == 0:
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
                    [tree_id, "blue", "Parent - Child"])
@@ -99,11 +91,18 @@ def show_tree():
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
                    [tree_id, "orange", "Partner - Partner"])
         db.commit()
-        cur = db.execute('SELECT color, type, tree_id_color FROM colors WHERE tree_id_color = ?', [tree_id])
-        colors = cur.fetchall()
+
+    cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
+    characters = cur.fetchall()
+
+    cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name", clr.color AS "color" '
+                     'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
+                     'JOIN characters AS c2 ON r.character2 = c2.id '
+                     'JOIN colors AS clr ON r.type = clr.type WHERE r.tree_id_relationship = ?', [tree_id])
+    relationships = cur.fetchall()
 
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, implicits=implicit_rels)
 
 @app.route('/', methods=['GET'])
 def home_page():
