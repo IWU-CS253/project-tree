@@ -109,7 +109,7 @@ def show_tree():
     relationships = cur.fetchall()
 
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, implicits=implicit_rels)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, implicits=implicit_rels, colors=colors)
 
 
 @app.route('/', methods=['GET'])
