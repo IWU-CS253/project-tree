@@ -180,6 +180,17 @@ class FamilytreeTestCase(unittest.TestCase):
         rv = self.app.get('/logout', follow_redirects=True)
         assert b'You were logged out' in rv.data
 
+    def test_delete_tree(self):
+        rv = self.app.post('/add-tree', data=dict(
+            tree_name="Tree1"
+        ), follow_redirects=True)
+        rv = self.app.get('/tree?tree_id=1&tree=Tree1')
+        rv = self.app.post('/delete_tree', data=dict(
+            tree_id=1), follow_redirects=True)
+
+        assert b'Tree1' not in rv.data
+
+        assert b'tree was deleted' in rv.data
 
 if __name__ == '__main__':
     unittest.main()
