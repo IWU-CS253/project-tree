@@ -146,6 +146,20 @@ def add_relationship():
     if char1 == char2:
         flash('Character cannot be in a relationship with themselves')
         return redirect(url_for('show_tree', tree_id=tree_id))
+    if rel_type == 'Parent - Child':
+        cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
+        characters = cur.fetchall()
+
+        cur = db.execute(
+            'SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
+            'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
+            'JOIN characters AS c2 ON r.character2 = c2.id WHERE r.tree_id_relationship = ?', [tree_id])
+        relationships = cur.fetchall()
+
+        if create_implicits.check_loops(characters, relationships, char1, char2):
+            flash('Character cannot be their own ancestor')
+            return redirect(url_for('show_tree', tree_id=tree_id))
+
     if rel_type == 'Custom':
         rel_type = request.form['custom_type']
     db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',

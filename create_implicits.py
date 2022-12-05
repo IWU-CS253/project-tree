@@ -173,7 +173,9 @@ def implicit_cousins(graph):
 
 
 def recur_grandparents(graph, base_char, cur_char, level=0):
+    outer_level = level
     for p in cur_char.parents:  # Looping through all parents' parents
+        level = outer_level
         if p not in base_char.grandparents:
             if level == 0:
                 base_char.grandparents[p.id] = 'Grandparent'
@@ -206,6 +208,36 @@ def add_implicits(graph):
     graph = implicit_cousins(graph)
     graph = implicit_grandparents(graph)
     return graph
+
+
+def check_loops(characters, relationships, char1, char2):
+    graph = create_graph(characters, relationships)
+    graph = implicit_siblings(graph)
+    graph = implicit_parents(graph)
+    char1 = graph.get_char(int(char1))
+    char2 = graph.get_char(int(char2))
+    if recur_check_loops(graph, char1, char2):
+        return True
+    #if recur_check_loops(graph, char2, char1):
+   #     return True
+
+
+def recur_check_loops(graph, char1, char2, visited=[]):
+    visited.append(char1)
+
+    for parent in char1.parents:
+        if parent not in visited:
+            if parent == char2:
+                return True
+            else:
+                return recur_check_loops(graph, parent, char2, visited)
+
+    for child in char1.children:
+        if child not in visited:
+            if child == char2:
+                return True
+            else:
+                return recur_check_loops(graph, child, char2, visited)
 
 
 def merge_implicits(characters, relationships):
