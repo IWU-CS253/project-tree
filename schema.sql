@@ -4,7 +4,6 @@ drop table if exists characters;
 drop table if exists relationships;
 drop table if exists colors;
 
-
 CREATE TABLE accounts   (
     username_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
