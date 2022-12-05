@@ -13,6 +13,7 @@ class Character:
         self.niblings = []  # list of nibling characters
         self.piblings = []  # list of pibling characters
         self.cousins = []  # list of cousin characters
+        self.partners = []  # List of spouses/partners; only used for generation creation
         self.generation = None
         self.grandparents = {}  # Dictionary of grandparents; keys are character ids, values are levels
         # e.g. distinguishing great grandparent from great ... grandparent
@@ -63,6 +64,10 @@ def create_graph(characters, relationships):
         if relationship['TYPE'] == 'Parent - Child':
             char1.add_child(char2)
             char2.add_parent(char1)
+
+        if relationship['TYPE'] == 'Partner - Partner' or relationship['TYPE'] == 'Spouse - Spouse':
+            char1.partners.append(char2)
+            char2.partners.append(char1)
 
         # Adds siblings to the graph, and adds implicit siblings transitively
         # Eg if a & b are siblings and b & c are siblings, makes them all siblings via sibling_nums
@@ -290,7 +295,8 @@ def test_graph():
     print(graph.get_char(8).children[0].id)
     for character in graph.charList:
         char = graph.get_char(character)
-        print('character: ', str(character), ' sibnum: ', str(char.sibling_num), ' generation: ', str(generations[char.id]))
+        print('character: ', str(character), ' sibnum: ', str(char.sibling_num), ' generation: ',
+              str(generations[char.id]))
 
     '''
         for parent in char.parents:
@@ -356,6 +362,13 @@ def create_generations(characters, relationships):
                 sib = graph.get_char(sibling)
                 if sib.sibling_num == char.sibling_num:
                     sib.generation = char.generation
+
+    for character in graph.charList:
+        char = graph.get_char(character)
+        for partner in char.partners:
+            if partner.generation != char.generation and partner.generation == 0:  # In other words, if a partner has no
+                # generational information and defaulted to the top
+                partner.generation = char.generation
 
     # Creating a dictionary to be passed to the html for generations
     generations = {}
