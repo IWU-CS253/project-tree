@@ -85,16 +85,16 @@ def show_tree():
     # checks if the colors table is empty for that tree if it is add default values
     if len(colors) == 0:
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-                   [tree_id, "blue", "Parent - Child"])
+                   [tree_id, "#0000ff", "Parent - Child"])
         db.commit()
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-                   [tree_id, "green", "Sibling - Sibling"])
+                   [tree_id, "#00ff00", "Sibling - Sibling"])
         db.commit()
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-                   [tree_id, "red", "Spouse - Spouse"])
+                   [tree_id, "#ff0000", "Spouse - Spouse"])
         db.commit()
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?, ?, ?)',
-                   [tree_id, "orange", "Partner - Partner"])
+                   [tree_id, "#ffa500", "Partner - Partner"])
         db.commit()
 
     cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
@@ -166,21 +166,12 @@ def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
 
-
-    var = request.form['type']
-    if var == 'Custom':
-        var = request.form['custom_type']
-
     rel_type = request.form['type']
     char1 = request.form['character1']
     char2 = request.form['character2']
     if char1 == char2:
         flash('Character cannot be in a relationship with themselves')
         return redirect(url_for('show_tree', tree_id=tree_id))
-
-    if rel_type == 'Custom':
-        rel_type = request.form['custom_type']
-
 
     if rel_type == 'Parent - Child':
         cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
@@ -198,6 +189,9 @@ def add_relationship():
 
     if rel_type == 'Custom':
         rel_type = request.form['custom_type']
+        db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?,?,?)',
+            [tree_id, "#000000", rel_type])
+        db.commit()
 
     db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
                 [char1, char2, rel_type, request.form['description'], tree_id])
@@ -302,6 +296,17 @@ def delete_tree():
     db.commit()
     flash('tree was deleted')
     return redirect(url_for('home_page'))
+
+@app.route('/add_color', methods=['POST'])
+def add_color():
+    db = get_db()
+    relationship_type = request.form['type']
+    color = request.form['color']
+    tree_id = request.form['tree_id']
+    db.execute('UPDATE colors SET color = ? WHERE type = ? AND tree_id_color = ?',
+               [color, relationship_type, tree_id])
+    db.commit()
+    return redirect(url_for('show_tree', tree_id=tree_id))
 
 
 # For run configurations to test the create_implicits graphs

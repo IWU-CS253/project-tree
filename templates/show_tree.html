@@ -18,7 +18,15 @@
                     {%  if characters|length > 1 %}
                         <h2>Relationship Color Legend</h2>
                         {%  for color in colors %}
-                            {{ color.type }} relationship is {{ color.color }}
+                            <div class="btn-group" role="group" >
+                            {{ color.type }}
+                            <form action="{{ url_for('add_color') }}" method="post" class="add-color">
+                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+                                <input type="hidden" name="type" value="{{ color.type }}">
+                                <input type="color" name="color" id="colorpicker" value={{ color.color }}>
+                                <input type="submit" class="btn btn-primary btn-sm" value={{ "Change" }}>
+                            </form>
+                            </div>
                             <br>
                         {% endfor %}
                         {% include 'add_relationship.html' %}
