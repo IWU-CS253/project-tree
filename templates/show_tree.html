@@ -8,7 +8,7 @@
 
     -->
     
-    <div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="container-fluid vh-auto w-auto">
         <div class="row">
             <div class="col-3 px-1 py-1">
                 <div class="container px-1 py-1">
@@ -16,19 +16,6 @@
                         {% include 'add_character.html' %}
                     </div>
                     {%  if characters|length > 1 %}
-                        <h2>Relationship Color Legend</h2>
-                        {%  for color in colors %}
-                            <div class="btn-group" role="group" >
-                            {{ color.type }}
-                            <form action="{{ url_for('add_color') }}" method="post" class="add-color">
-                                <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                <input type="hidden" name="type" value="{{ color.type }}">
-                                <input type="color" name="color" id="colorpicker" value={{ color.color }}>
-                                <input type="submit" class="btn btn-primary btn-sm" value={{ "Change" }}>
-                            </form>
-                            </div>
-                            <br>
-                        {% endfor %}
                         {% include 'add_relationship.html' %}
                     {% endif %}
                 </div>
@@ -82,7 +69,7 @@
                     {% endfor %}
                     </ul>
                 </div>
-                <div class="col-9 border-start border-dark border-3 bg-light">
+                <div class="col-6 border-start border-dark border-3 bg-light">
                     <div id="mynetwork"></div>
                        <script type="text/javascript">
 
@@ -95,11 +82,7 @@
                             var edges = new vis.DataSet([
 
                                 {% for relationship in relationships %}
-                                    {% if relationship.type not in ['Spouse - Spouse', 'Parent - Child', 'Sibling - Sibling', 'Partner - Partner'] %}
-                                        {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'black'}},
-                                    {% else %}
                                         {from: {{ relationship.character1 }}, to: {{ relationship.character2 }}, color: {color:'{{ relationship.color }}'}},
-                                    {% endif %}
                                 {% endfor %}
                            ]);
                            // create a network
@@ -133,6 +116,22 @@
 
 
                         </script>
+                    </div>
+                    <div class="col-3">
+                        {%  if characters|length > 1 %}
+                            <h2>Relationship Legend</h2>
+                                {%  for color in colors %}
+                                    <div>
+                                    {{ color.type }}
+                                    <form action="{{ url_for('add_color') }}" method="post" class="add-color">
+                                        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+                                        <input type="hidden" name="type" value="{{ color.type }}">
+                                        <input type="color" name="color" id="colorpicker" value={{ color.color }}>
+                                        <input type="submit" class="btn btn-primary btn-sm" value={{ "Change" }}>
+                                    </form>
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
         </div>
