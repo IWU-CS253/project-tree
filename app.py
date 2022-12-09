@@ -190,7 +190,7 @@ def add_relationship():
     if rel_type == 'Custom':
         rel_type = request.form['custom_type']
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?,?,?)',
-            [tree_id, "#000000", rel_type])
+            [tree_id, "#FF0000", rel_type])
         db.commit()
 
     db.execute('INSERT INTO relationships (character1, character2, type, description, tree_id_relationship) VALUES (?,?,?,?,?)',
