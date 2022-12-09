@@ -5,14 +5,6 @@
         <aside class="col-2">
             <div class="flex-grow-1">
                 <ul class="py-3 list-unstyled">
-                    <!--
-                    <li class="py-1">
-                        <a href="">Login</a>
-                    </li>
-                    <li class="py-1">
-                        <a href="">Create Account</a>
-                    </li>
-                    -->
                     <li class="py-1">
                         <b>My Trees</b>
                             <div class="py-2">
@@ -29,6 +21,8 @@
                                             <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="Delete">
                                     </form>
                                     </div>
+                                {%  else %}
+                                    <i>No trees added yet</i>
                                 {%  endfor  %}
                             </div>
 

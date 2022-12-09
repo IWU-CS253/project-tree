@@ -100,14 +100,13 @@ def show_tree():
     cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
     characters = cur.fetchall()
 
-    cur = db.execute('SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name", clr.color AS "color" '
+    cur = db.execute('SELECT DISTINCT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name", clr.color AS "color" '
                      'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
                      'JOIN characters AS c2 ON r.character2 = c2.id '
-                     'LEFT OUTER JOIN colors AS clr ON r.type = clr.type WHERE r.tree_id_relationship = ?', [tree_id])
-                        # NOTE: Needs to be a Left Outer Join or relationships w/out defined colors like customs
-                        # will be lost
+                     'JOIN colors AS clr ON r.type = clr.type WHERE r.tree_id_relationship = ?', [tree_id])
     relationships = cur.fetchall()
-
+    for relationship in relationships:
+        print(relationship['CHARACTER1'])
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
 
     generations = create_implicits.create_generations(characters, relationships)

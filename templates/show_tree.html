@@ -44,6 +44,7 @@
                                 <div class="well">
                                     <h5>Defined Relationships</h5>
                                     {%  for relationship in relationships %}
+                                        Test?
                                         {%  if relationship['CHARACTER1'] == character.id or relationship['CHARACTER2'] == character.id %}
                                             <b>{{ relationship['CHAR1_NAME'] }}</b> & <b>{{ relationship['CHAR2_NAME'] }}</b>:
                                             <br>
@@ -115,7 +116,6 @@
                                 layout: {
                                     hierarchical: {
                                         direction: "UD",
-                                        sortMethod: "directed",
                                     },
                                 },
                             };
