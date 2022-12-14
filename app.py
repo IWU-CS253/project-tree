@@ -165,7 +165,7 @@ def add_character():
 def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
-
+    print('hi')
 
     var = request.form['type']
     if var == 'Custom':
@@ -185,6 +185,7 @@ def add_relationship():
     if rel_type == 'Parent - Child':
         cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
         characters = cur.fetchall()
+
 
         cur = db.execute(
             'SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
@@ -317,3 +318,5 @@ def find_user():
         user = session['guest_code']
 
     return user
+
+
