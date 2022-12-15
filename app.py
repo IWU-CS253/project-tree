@@ -372,11 +372,9 @@ def update_generation(graph):
 
 def unique_generation(graph):
     new_list = graph.keys()
-    new_num = 0
     generation_tracker = []
     for i in new_list:
         if not graph[i] in generation_tracker:
             new_num = graph[i]
             generation_tracker.append(new_num)
-    #generation_tracker.sort()
     return generation_tracker
