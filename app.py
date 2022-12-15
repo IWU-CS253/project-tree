@@ -109,8 +109,12 @@ def show_tree():
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
 
     generations = create_implicits.create_generations(characters, relationships)
+
+    generations = update_generation(generations)
+
+    generation_list = unique_generation(generations)
     
-    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels, generations=generations)
+    return render_template('show_tree.html', tree=tree, characters=characters, relationships=relationships, colors=colors, implicits=implicit_rels, generations=generations, generation_list=generation_list)
 
 
 @app.route('/', methods=['GET'])
@@ -124,20 +128,28 @@ def home_page():
 
     user = find_user()
 
+
     db = get_db()
     cur = db.execute('SELECT tree_name, tree_id FROM trees WHERE username = \'{}\''.format(user))
     trees = cur.fetchall()
-    return render_template('homepage.html', trees=trees)
+    return render_template('homepage.html', trees=trees, user=user)
 
 
 @app.route('/add-tree', methods=['POST'])
 def add_tree():
-    """Adds a new tree"""
+    """Adds a Tree"""
+
 
     user = find_user()
 
     db = get_db()
     tree_name = request.form['tree_name']
+    cur = db.execute('SELECT tree_name FROM trees  WHERE EXISTS(SELECT tree_name, username FROM trees WHERE tree_name = ? AND username = ? ) ',
+               [tree_name, user])
+    tree = cur.fetchone()
+    if tree:
+        flash('Please add a unique tree name')
+        return redirect(url_for('home_page'))
     db.execute('INSERT INTO trees (tree_name, username) VALUES (?, ?)',
                [tree_name, user])
     db.commit()
@@ -152,8 +164,9 @@ def add_character():
     db = get_db()
     name = request.form['name']
     tree_id = request.form['tree_id']
-    db.execute('INSERT INTO characters (name, tree_id_character) VALUES (?, ?)',
-               [name, tree_id])
+    character_generation = request.form['character_generation']
+    db.execute('INSERT INTO characters (name, tree_id_character, generation) VALUES (?, ?, ?)',
+               [name, tree_id, character_generation])
     db.commit()
     flash('Added ' + name)
     return redirect(url_for('show_tree', tree_id=tree_id))
@@ -243,6 +256,12 @@ def delete_relationship():
 def register():
     db = get_db()
     username = request.form['username']
+    cur = db.execute('SELECT username FROM accounts  WHERE EXISTS (SELECT username FROM accounts WHERE username = ?) ',
+               [request.form['username']])
+    name = cur.fetchone()
+    if name:
+        flash('Username Taken, Please select a different username')
+        return redirect(url_for('show_register'))
     password = generate_password_hash(request.form['password'], "sha256")
     db.execute('INSERT INTO accounts (username, password_hash) VALUES (?,?)',
                [username, password])
@@ -254,16 +273,24 @@ def register():
 @app.route('/login', methods=['POST'])
 def login():
     db = get_db()
+    cur = db.execute('SELECT username FROM accounts  WHERE EXISTS (SELECT username FROM accounts WHERE username = ?) ',
+               [request.form['username']])
+    name = cur.fetchone()
+    if not name:
+        flash('Incorrect username or password')
+        return redirect(url_for('show_login'))
     cur = db.execute('SELECT password_hash FROM accounts WHERE username = ?',
                      [request.form['username']])
     database = cur.fetchone()
+
     if check_password_hash(database[0], request.form['password']):
         session['username'] = request.form['username']
+
         flash('You were logged in')
         return redirect(url_for('home_page'))
     else:
         flash('Incorrect username or password')
-        return redirect(url_for('login'))
+        return redirect(url_for('show_login'))
 
     return render_template('homepage')
 
@@ -271,6 +298,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
+
     flash('You were logged out')
     return redirect(url_for('home_page'))
 
@@ -316,7 +344,40 @@ def implicit_test_graph():
 def find_user():
     if 'username' in session:
         user = session['username']
+
     else:
         user = session['guest_code']
 
     return user
+
+
+@app.route('/edit_generation', methods=['POST'])
+def edit_generation():
+    generation = request.form['generation']
+    tree_id = request.form['tree_id']
+    db = get_db()
+    db.execute('UPDATE characters SET generation = ? WHERE id = ?', [generation, request.form['id']])
+    db.commit()
+    flash('Character Generation Updated')
+    return redirect(url_for('show_tree', tree_id=tree_id))
+
+
+def update_generation(graph):
+    db = get_db()
+    cur =  db.execute('SELECT generation, id FROM characters')
+    generations = cur.fetchall()
+    for i in range(len(generations)):
+        if generations[i][0] != 50:
+            updated_pair = {generations[i][1]: generations[i][0]}
+            graph.update(updated_pair)
+    return graph
+
+
+def unique_generation(graph):
+    new_list = graph.keys()
+    generation_tracker = []
+    for i in new_list:
+        if not graph[i] in generation_tracker:
+            new_num = graph[i]
+            generation_tracker.append(new_num)
+    return generation_tracker

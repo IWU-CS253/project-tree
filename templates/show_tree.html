@@ -30,6 +30,7 @@
                            {{ character.name }}
                             {% include 'edit_character.html' %}
                             {% include 'delete_character.html' %}
+                            {% include 'edit_generation.html' %}
                         </div>
                         <div class="row">
                             <button class="col mb-1 mt-1 btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#relationships{{ character.id }}" aria-expanded="false" aria-controls="showRelationships">
@@ -88,11 +89,6 @@
                            // create a network
                             var container = document.getElementById('mynetwork');
 
-                           // provide the data in the vis format
-
-
-                           // create a network
-                            var container = document.getElementById('mynetwork');
 
                            // provide the data in the vis format
                             // provide the data in the vis format
@@ -107,6 +103,10 @@
                                     hierarchical: {
                                         direction: "UD",
                                         sortMethod: "directed",
+                                    },
+                                    interaction: {
+                                        navigationButtons: true,
+                                        keyboard: true,
                                     },
                                 },
                             };

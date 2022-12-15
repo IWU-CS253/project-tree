@@ -32,14 +32,17 @@ class FamilytreeTestCase(unittest.TestCase):
         # their stuff
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
         rv = self.app.post('/add-character', data=dict(
             name='George',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
         rv = self.app.post('/add-character', data=dict(
             name='Mortimer',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -119,6 +122,7 @@ class FamilytreeTestCase(unittest.TestCase):
         self.test_add_tree()
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -126,6 +130,7 @@ class FamilytreeTestCase(unittest.TestCase):
 
         rv = self.app.post('/add-character', data=dict(
             name='George',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -147,11 +152,13 @@ class FamilytreeTestCase(unittest.TestCase):
 
         rv = self.app.post('/add-character', data=dict(
             name='George',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -170,9 +177,21 @@ class FamilytreeTestCase(unittest.TestCase):
             username='zach',
             password='mark', ), follow_redirects=True)
         assert b'Account Created' in rv.data
+        rv = self.app.post('/register', data=dict(
+            username='zach',
+            password='mark', ), follow_redirects=True)
+        assert b'Username Taken, Please select a different username' in rv.data
 
     def test_login(self):
         self.test_register()
+        rv = self.app.post('/login', data=dict(
+            username='zach1',
+            password='mark', ), follow_redirects=True)
+        assert b'Incorrect username or password'
+        rv = self.app.post('/login', data=dict(
+            username='zach',
+            password='mark1', ), follow_redirects=True)
+        assert b'Incorrect username or password'
         rv = self.app.post('/login', data=dict(
             username='zach',
             password='mark', ), follow_redirects=True)
@@ -204,18 +223,13 @@ class FamilytreeTestCase(unittest.TestCase):
 
         rv = self.app.post('/add-character', data=dict(
             name='George',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
-            tree_id=1
-        ), follow_redirects=True)
-
-        rv = self.app.post('/relationship', data=dict(
-            character1=1,
-            character2=2,
-            type='Parent - Child',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -226,6 +240,22 @@ class FamilytreeTestCase(unittest.TestCase):
         ), follow_redirects=True)
 
         assert b'#000000' in rv.data
+
+    def test_edit_generation(self):
+        self.test_add_tree()
+        self.test_add_character()
+        rv = self.app.post('/relationship', data=dict(
+            character1=1,
+            character2=2,
+            type='Parent - Child',
+            tree_id=1
+        ), follow_redirects=True)
+        rv = self.app.post('/edit_generation', data=dict(
+            generation=1,
+            id=1,
+            tree_id=1
+        ), follow_redirects=True)
+        assert b'Character Generation Updated' in rv.data
 
 if __name__ == '__main__':
     unittest.main()
