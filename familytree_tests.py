@@ -181,6 +181,7 @@ class FamilytreeTestCase(unittest.TestCase):
             username='zach',
             password='mark', ), follow_redirects=True)
         assert b'Username Taken, Please select a different username' in rv.data
+
     def test_login(self):
         self.test_register()
         rv = self.app.post('/login', data=dict(
@@ -213,6 +214,7 @@ class FamilytreeTestCase(unittest.TestCase):
         assert b'Tree1' not in rv.data
 
         assert b'tree was deleted' in rv.data
+
     def test_edit_generation(self):
         self.test_add_tree()
         self.test_add_character()
@@ -222,6 +224,7 @@ class FamilytreeTestCase(unittest.TestCase):
             type='Parent - Child',
             tree_id=1
         ), follow_redirects=True)
+        self.app.get('/tree?tree_id=1&tree=Tree1')
         rv = self.app.post('/edit-generation', data=dict(
             id='1',
             character_generation=1,
