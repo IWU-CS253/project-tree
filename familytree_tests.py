@@ -162,15 +162,15 @@ class FamilytreeTestCase(unittest.TestCase):
             tree_id=1
         ), follow_redirects=True)
 
-        assert b'Relationship Color Legend' in rv.data
+        assert b'Relationship Legend' in rv.data
 
-        assert b'Partner - Partner relationship is orange' in rv.data
+        assert b'Partner - Partner' in rv.data
 
-        assert b'Spouse - Spouse relationship is red' in rv.data
+        assert b'Spouse - Spouse' in rv.data
 
-        assert b'Sibling - Sibling relationship is green' in rv.data
+        assert b'Sibling - Sibling' in rv.data
 
-        assert b'Parent - Child relationship is blue' in rv.data
+        assert b'Parent - Child' in rv.data
 
     def test_register(self):
         rv = self.app.post('/register', data=dict(
@@ -215,6 +215,32 @@ class FamilytreeTestCase(unittest.TestCase):
 
         assert b'tree was deleted' in rv.data
 
+    def test_add_color(self):
+        self.app.get('/')
+        rv = self.app.post('/add-tree', data=dict(
+            tree_name="Tree1"
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add-character', data=dict(
+            name='George',
+            character_generation=50,
+            tree_id=1
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add-character', data=dict(
+            name='Alice',
+            character_generation=50,
+            tree_id=1
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add_color', data=dict(
+            type='Parent - Child',
+            color='#000000',
+            tree_id=1
+        ), follow_redirects=True)
+
+        assert b'#000000' in rv.data
+
     def test_edit_generation(self):
         self.test_add_tree()
         self.test_add_character()
@@ -224,10 +250,9 @@ class FamilytreeTestCase(unittest.TestCase):
             type='Parent - Child',
             tree_id=1
         ), follow_redirects=True)
-        self.app.get('/tree?tree_id=1&tree=Tree1')
-        rv = self.app.post('/edit-generation', data=dict(
-            id='1',
-            character_generation=1,
+        rv = self.app.post('/edit_generation', data=dict(
+            generation=1,
+            id=1,
             tree_id=1
         ), follow_redirects=True)
         assert b'Character Generation Updated' in rv.data
