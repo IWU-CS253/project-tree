@@ -32,14 +32,17 @@ class FamilytreeTestCase(unittest.TestCase):
         # their stuff
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
         rv = self.app.post('/add-character', data=dict(
             name='George',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
         rv = self.app.post('/add-character', data=dict(
             name='Mortimer',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -119,6 +122,7 @@ class FamilytreeTestCase(unittest.TestCase):
         self.test_add_tree()
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -126,6 +130,7 @@ class FamilytreeTestCase(unittest.TestCase):
 
         rv = self.app.post('/add-character', data=dict(
             name='George',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
@@ -147,32 +152,48 @@ class FamilytreeTestCase(unittest.TestCase):
 
         rv = self.app.post('/add-character', data=dict(
             name='George',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
         rv = self.app.post('/add-character', data=dict(
             name='Alice',
+            character_generation=50,
             tree_id=1
         ), follow_redirects=True)
 
-        assert b'Relationship Color Legend' in rv.data
+        assert b'Relationship Legend' in rv.data
 
-        assert b'Partner - Partner relationship is orange' in rv.data
+        assert b'Partner - Partner' in rv.data
 
-        assert b'Spouse - Spouse relationship is red' in rv.data
+        assert b'Spouse - Spouse' in rv.data
 
-        assert b'Sibling - Sibling relationship is green' in rv.data
+        assert b'Sibling - Sibling' in rv.data
 
         assert b'Parent - Child relationship is blue' in rv.data
+        assert b'Parent - Child' in rv.data
+
 
     def test_register(self):
         rv = self.app.post('/register', data=dict(
             username='zach',
             password='mark', ), follow_redirects=True)
         assert b'Account Created' in rv.data
+        rv = self.app.post('/register', data=dict(
+            username='zach',
+            password='mark', ), follow_redirects=True)
+        assert b'Username Taken, Please select a different username' in rv.data
 
     def test_login(self):
         self.test_register()
+        rv = self.app.post('/login', data=dict(
+            username='zach1',
+            password='mark', ), follow_redirects=True)
+        assert b'Incorrect username or password'
+        rv = self.app.post('/login', data=dict(
+            username='zach',
+            password='mark1', ), follow_redirects=True)
+        assert b'Incorrect username or password'
         rv = self.app.post('/login', data=dict(
             username='zach',
             password='mark', ), follow_redirects=True)
@@ -182,6 +203,7 @@ class FamilytreeTestCase(unittest.TestCase):
         self.test_login()
         rv = self.app.get('/logout', follow_redirects=True)
         assert b'You were logged out' in rv.data
+
 
     def test_delete_tree(self):
         self.app.get('/')
@@ -196,6 +218,47 @@ class FamilytreeTestCase(unittest.TestCase):
 
         assert b'tree was deleted' in rv.data
 
+    def test_add_color(self):
+        self.app.get('/')
+        rv = self.app.post('/add-tree', data=dict(
+            tree_name="Tree1"
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add-character', data=dict(
+            name='George',
+            character_generation=50,
+            tree_id=1
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add-character', data=dict(
+            name='Alice',
+            character_generation=50,
+            tree_id=1
+        ), follow_redirects=True)
+
+        rv = self.app.post('/add_color', data=dict(
+            type='Parent - Child',
+            color='#000000',
+            tree_id=1
+        ), follow_redirects=True)
+
+        assert b'#000000' in rv.data
+
+    def test_edit_generation(self):
+        self.test_add_tree()
+        self.test_add_character()
+        rv = self.app.post('/relationship', data=dict(
+            character1=1,
+            character2=2,
+            type='Parent - Child',
+            tree_id=1
+        ), follow_redirects=True)
+        rv = self.app.post('/edit_generation', data=dict(
+            generation=1,
+            id=1,
+            tree_id=1
+        ), follow_redirects=True)
+        assert b'Character Generation Updated' in rv.data
 
 if __name__ == '__main__':
     unittest.main()
