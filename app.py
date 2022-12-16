@@ -112,7 +112,7 @@ def show_tree():
 
     generations = create_implicits.create_generations(characters, relationships)
 
-    # generations = update_generation(generations)
+    generations = update_generation(generations)
 
     generation_list = unique_generation(generations)
     
