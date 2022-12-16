@@ -40,7 +40,6 @@
                                 <div class="well">
                                     <h5>Defined Relationships</h5>
                                     {%  for relationship in relationships %}
-                                        Test?
                                         {%  if relationship['CHARACTER1'] == character.id or relationship['CHARACTER2'] == character.id %}
                                             <b>{{ relationship['CHAR1_NAME'] }}</b> & <b>{{ relationship['CHAR2_NAME'] }}</b>:
                                             <br>
@@ -67,7 +66,7 @@
                                                     <input type="hidden" value="{{ implicit['CHARACTER2'] }}" name="character2">
                                                     <input type="hidden" value="{{ implicit['TYPE'] }}" name="type">
                                                     <input type="hidden" value="{{ tree.tree_id }}" name="tree_id">
-                                                    <input type="hidden" value="test" name="description">
+                                                    <input type="hidden" value="" name="description">
                                                     <input class="mb-1 mt-1" type="submit" value="Add to Defined Relationships" aria-labelledby="Add Relationship Button">
                                                 </form>
 

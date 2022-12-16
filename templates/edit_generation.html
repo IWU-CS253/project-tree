@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<div class="row" >
+<div class="row fs-6" >
 <form action="{{ url_for('edit_generation') }}" method="post" class="mb-1 mt-1">
 <select id="generation" name="generation" class="dropdown">
   {% for generation in generation_list%}
@@ -10,5 +8,5 @@
   <input type="hidden" name="id" value="{{ character.id }}">
   <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
   <input class="btn btn-secondary btn-sm" type="submit" value="Edit Generation" aria-labelledby="Edit Generation">
-  </div>
 </form>
+</div>
