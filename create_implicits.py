@@ -32,6 +32,7 @@ class Graph:
     def __init__(self):
         self.charList = {}
         self.charKey = {}
+        self.gen_visited = []  # For generating generations
 
     def add_character(self, key, name):  # adds a character to the graph
         new_character = Character(key, name)
@@ -197,7 +198,6 @@ def recur_grandparents(graph, base_char, cur_char, level=0):
     return graph
 
 
-
 def implicit_grandparents(graph):
     for character in graph.charList:
         char = graph.get_char(character)
@@ -218,12 +218,39 @@ def add_implicits(graph):
 
 def check_loops(characters, relationships, char1, char2):
     graph = create_graph(characters, relationships)
-    graph = implicit_siblings(graph)
-    graph = implicit_parents(graph)
     char1 = graph.get_char(int(char1))
     char2 = graph.get_char(int(char2))
-    if recur_check_loops(graph, char1, char2):
+    if recur_check_parents(graph, char1, char2):
         return True
+    if recur_check_children(graph, char1, char2):
+        return True
+
+def recur_check_parents(graph, char1, char2, visited=[]):
+    visited.append(char1)
+    loops = False
+
+    for parent in char1.parents:
+        if parent not in visited:
+            if parent == char2:
+                return True
+            else:
+                loops = recur_check_parents(graph, parent, char2, visited)
+
+    return loops
+
+
+def recur_check_children(graph, char1, char2, visited=[]):
+    visited.append(char1)
+    loops = False
+
+    for child in char1.children:
+        if child not in visited:
+            if child == char2:
+                return True
+            else:
+                loops = recur_check_children(graph, child, char2, visited)
+
+    return loops
 
 
 def recur_check_loops(graph, char1, char2, visited=[]):
@@ -255,10 +282,8 @@ def merge_implicits(characters, relationships):
     graph = add_implicits(create_graph(characters, relationships))
     implicit_rels = []
 
-
     for char in graph.charList:
         char = graph.get_char(char)
-
 
     rel_list = []  # Simplifies avoiding duplicates, since relationship objects are fairly complex and difficult to
     # check exactly without tracking descriptions across the whole file. Also keeps implicits and explicits separate.
@@ -359,33 +384,30 @@ def test_graph():
                       str(char.grandparents[grandparent]))'''
 
 
-
-def recur_generations(graph, char, visited=[]):
-    visited.append(char)
-    distance = char.generation
+def recur_generations(graph, char):
+    graph.gen_visited.append(char)
 
     for child in char.children:
-        if child not in visited:
+        distance = char.generation
+        if child not in graph.gen_visited:
             distance += 1
             child.generation = distance
-            recur_generations(graph, child, visited)
-
-    distance = char.generation  # Resetting distance to the proper recursion depth
+            recur_generations(graph, child)
 
     for parent in char.parents:
-        if parent not in visited:
+        distance = char.generation  # Resetting distance to the proper recursion depth
+        if parent not in graph.gen_visited:
             distance -= 1
             parent.generation = distance
-            recur_generations(graph, parent, visited)
-
-    distance = char.generation  # Resetting distance to the proper recursion depth
+            recur_generations(graph, parent)
 
     for sibling in graph.charList:
+        distance = char.generation  # Resetting distance to the proper recursion depth
         sib = graph.get_char(sibling)
         if sib.sibling_num == char.sibling_num and sib.sibling_num != 0:
-            if sib not in visited:
+            if sib not in graph.gen_visited:
                 sib.generation = distance
-                recur_generations(graph, sib, visited)
+                recur_generations(graph, sib)
 
     return graph
 
@@ -394,8 +416,9 @@ def create_generations(characters, relationships):
     graph = add_implicits(create_graph(characters, relationships))
     pivot_chars = find_top(graph)
     for char in pivot_chars:
-        char.generation = 0
-        graph = recur_generations(graph, char)
+        if char not in graph.gen_visited:
+            char.generation = 0
+            graph = recur_generations(graph, char)
 
     # Applying generations to siblings who may have been missed
     for character in graph.charList:
@@ -406,14 +429,12 @@ def create_generations(characters, relationships):
                 if sib.sibling_num == char.sibling_num:
                     sib.generation = char.generation
 
-
     for character in graph.charList:
         char = graph.get_char(character)
         for partner in char.partners:
             if partner.generation != char.generation and partner.generation == 0:  # In other words, if a partner has no
                 # generational information and defaulted to the top
                 partner.generation = char.generation
-
 
     # Creating a dictionary to be passed to the html for generations
     generations = {}
@@ -449,4 +470,3 @@ def find_top(graph):
                 checked.append(char.sibling_num)
 
     return top_char
-

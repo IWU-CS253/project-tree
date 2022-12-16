@@ -104,13 +104,15 @@ def show_tree():
                      'FROM relationships AS r JOIN characters AS c1 ON r.character1 = c1.id '
                      'JOIN characters AS c2 ON r.character2 = c2.id '
                      'JOIN colors AS clr ON r.type = clr.type WHERE r.tree_id_relationship = ? AND tree_id_color = ?', [tree_id, tree_id])
-    relationships = cur.fetchall()
 
+    relationships = cur.fetchall()
+    for relationship in relationships:
+        print(relationship['CHARACTER1'])
     implicit_rels = create_implicits.merge_implicits(characters, relationships)
 
     generations = create_implicits.create_generations(characters, relationships)
 
-    generations = update_generation(generations)
+    # generations = update_generation(generations)
 
     generation_list = unique_generation(generations)
     
@@ -176,8 +178,9 @@ def add_character():
 def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
-
     rel_type = request.form['type']
+    if rel_type == 'Custom':
+        rel_type = request.form['custom_type']
     char1 = request.form['character1']
     char2 = request.form['character2']
     if char1 == char2:
@@ -187,6 +190,7 @@ def add_relationship():
     if rel_type == 'Parent - Child':
         cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
         characters = cur.fetchall()
+
 
         cur = db.execute(
             'SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
@@ -198,8 +202,8 @@ def add_relationship():
             flash('Character cannot be their own ancestor')
             return redirect(url_for('show_tree', tree_id=tree_id))
 
-    if rel_type == 'Custom':
-        rel_type = request.form['custom_type']
+    # This covers custom relationships and implicits being added as defined
+    if rel_type not in ['Parent - Child', 'Sibling - Sibling', 'Spouse - Spouse', 'Partner - Partner']:
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?,?,?)',
             [tree_id, "#FF0000", rel_type])
         db.commit()
@@ -350,7 +354,6 @@ def find_user():
 
     return user
 
-
 @app.route('/edit_generation', methods=['POST'])
 def edit_generation():
     generation = request.form['generation']
@@ -381,3 +384,4 @@ def unique_generation(graph):
             new_num = graph[i]
             generation_tracker.append(new_num)
     return generation_tracker
+
