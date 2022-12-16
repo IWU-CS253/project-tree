@@ -178,7 +178,9 @@ def add_character():
 def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
-
+    var = request.form['type']
+    if var == 'Custom':
+        var = request.form['custom_type']
     rel_type = request.form['type']
     char1 = request.form['character1']
     char2 = request.form['character2']
@@ -189,6 +191,7 @@ def add_relationship():
     if rel_type == 'Parent - Child':
         cur = db.execute('SELECT name, id, tree_id_character FROM characters WHERE tree_id_character = ?', [tree_id])
         characters = cur.fetchall()
+
 
         cur = db.execute(
             'SELECT r.character1, r.character2, r.type, r.description, c1.name AS "char1_name", c2.name AS "char2_name" '
@@ -352,7 +355,6 @@ def find_user():
 
     return user
 
-
 @app.route('/edit_generation', methods=['POST'])
 def edit_generation():
     generation = request.form['generation']
@@ -383,3 +385,4 @@ def unique_generation(graph):
             new_num = graph[i]
             generation_tracker.append(new_num)
     return generation_tracker
+

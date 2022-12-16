@@ -170,7 +170,9 @@ class FamilytreeTestCase(unittest.TestCase):
 
         assert b'Sibling - Sibling' in rv.data
 
+        assert b'Parent - Child relationship is blue' in rv.data
         assert b'Parent - Child' in rv.data
+
 
     def test_register(self):
         rv = self.app.post('/register', data=dict(
@@ -201,6 +203,7 @@ class FamilytreeTestCase(unittest.TestCase):
         self.test_login()
         rv = self.app.get('/logout', follow_redirects=True)
         assert b'You were logged out' in rv.data
+
 
     def test_delete_tree(self):
         self.app.get('/')

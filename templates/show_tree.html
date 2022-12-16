@@ -59,7 +59,20 @@
                                         {%  if implicit['CHARACTER1'] == character.id or implicit['CHARACTER2'] == character.id %}
                                             <b>{{ implicit['CHAR1_NAME'] }}</b> & <b>{{ implicit['CHAR2_NAME'] }}</b>
                                             <br>
-                                            <i>{{ implicit['TYPE'] }}</i>
+                                            <div class="row">
+                                                <label for="implicit_type"> <i>{{ implicit['TYPE'] }}</i></label>
+
+                                                <form action="{{ url_for('add_relationship') }}" method="post">
+                                                    <input type="hidden" value="{{ implicit['CHARACTER1'] }}" name= "character1">
+                                                    <input type="hidden" value="{{ implicit['CHARACTER2'] }}" name="character2">
+                                                    <input type="hidden" value="{{ implicit['TYPE'] }}" name="type">
+                                                    <input type="hidden" value="{{ tree.tree_id }}" name="tree_id">
+                                                    <input type="hidden" value="test" name="description">
+                                                    <input class="mb-1 mt-1" type="submit" value="Add to Defined Relationships" aria-labelledby="Add Relationship Button">
+                                                </form>
+
+                                            </div>
+
                                             <br>
                                         {% endif %}
                                     {% endfor %}
