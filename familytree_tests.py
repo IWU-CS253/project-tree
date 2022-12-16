@@ -170,7 +170,6 @@ class FamilytreeTestCase(unittest.TestCase):
 
         assert b'Sibling - Sibling' in rv.data
 
-        assert b'Parent - Child relationship is blue' in rv.data
         assert b'Parent - Child' in rv.data
 
 
