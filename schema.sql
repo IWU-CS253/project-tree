@@ -19,8 +19,8 @@ CREATE TABLE trees  (
 CREATE TABLE characters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT not null,
-    description TEXT,
     tree_id_character INT,
+    generation INT,
     FOREIGN KEY (tree_id_character) references trees(tree_id) ON DELETE CASCADE
 );
 

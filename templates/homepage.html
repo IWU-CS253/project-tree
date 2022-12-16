@@ -8,22 +8,26 @@
                     <li class="py-1">
                         <b>My Trees</b>
                             <div class="py-2">
+                                <div class="container">
                                 {% for tree in trees %}
-                                    <div class="btn-group" role="group" >
-                                    <form action="{{ url_for('show_tree') }}" method="get">
-                                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                            <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="{{ tree.tree_name }}">
-                                    </form>
-                                    <div class="col-2">
-                                    </div>
-                                    <form action="{{ url_for('delete_tree') }}" method="post">
-                                            <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
-                                            <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="Delete">
-                                    </form>
+                                    <div class="row">
+                                            <div class="col px-2">
+                                                <form action="{{ url_for('show_tree') }}" method="get">
+                                                        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+                                                        <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="{{ tree.tree_name }}">
+                                                </form>
+                                            </div>
+                                            <div class="col px-2">
+                                                <form action="{{ url_for('delete_tree') }}" method="post">
+                                                        <input type="hidden" name="tree_id" value="{{ tree.tree_id }}">
+                                                        <input type="submit" name='tree' class="btn btn-primary btn-sm mb-3" value="Delete">
+                                                </form>
+                                            </div>
                                     </div>
                                 {%  else %}
                                     <i>No trees added yet</i>
                                 {%  endfor  %}
+                            </div>
                             </div>
 
                     </li>
