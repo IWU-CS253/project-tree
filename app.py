@@ -112,7 +112,7 @@ def show_tree():
 
     generations = create_implicits.create_generations(characters, relationships)
 
-    generations = update_generation(generations)
+    # generations = update_generation(generations)
 
     generation_list = unique_generation(generations)
     
@@ -178,10 +178,9 @@ def add_character():
 def add_relationship():
     db = get_db()
     tree_id = request.form['tree_id']
-    var = request.form['type']
-    if var == 'Custom':
-        var = request.form['custom_type']
     rel_type = request.form['type']
+    if rel_type == 'Custom':
+        rel_type = request.form['custom_type']
     char1 = request.form['character1']
     char2 = request.form['character2']
     if char1 == char2:
@@ -203,8 +202,8 @@ def add_relationship():
             flash('Character cannot be their own ancestor')
             return redirect(url_for('show_tree', tree_id=tree_id))
 
-    if rel_type == 'Custom':
-        rel_type = request.form['custom_type']
+    # This covers custom relationships and implicits being added as defined
+    if rel_type not in ['Parent - Child', 'Sibling - Sibling', 'Spouse - Spouse', 'Partner - Partner']:
         db.execute('INSERT INTO colors (tree_id_color, color, type) VALUES (?,?,?)',
             [tree_id, "#FF0000", rel_type])
         db.commit()
